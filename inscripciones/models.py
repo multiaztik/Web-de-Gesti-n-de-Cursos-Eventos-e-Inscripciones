@@ -23,7 +23,7 @@ class Inscripcion(models.Model):
     )
     evidencia = models.FileField(
         upload_to='inscripciones/evidencias/', blank=True, null=True,
-        verbose_name='Evidencia o comprobante'
+        verbose_name='Comprobante de inscripción'
     )
 
     class Meta:

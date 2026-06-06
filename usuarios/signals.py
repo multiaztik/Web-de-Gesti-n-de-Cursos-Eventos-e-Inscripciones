@@ -6,6 +6,7 @@ from .models import PerfilUsuario
 
 @receiver(post_save, sender=User)
 def crear_perfil(sender, instance, created, **kwargs):
-    """Crea automáticamente un PerfilUsuario cuando se crea un User."""
-    if created and not hasattr(instance, 'perfil'):
-        PerfilUsuario.objects.get_or_create(usuario=instance)
+    """Crea PerfilUsuario solo para superusuarios creados desde el admin/CLI.
+    Los usuarios del formulario de registro ya crean su perfil con el tipo correcto."""
+    if created and instance.is_superuser:
+        PerfilUsuario.objects.get_or_create(usuario=instance, defaults={'tipo': 'admin'})

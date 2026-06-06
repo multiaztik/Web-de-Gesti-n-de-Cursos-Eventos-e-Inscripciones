@@ -18,8 +18,13 @@ class RegistroUsuarioForm(UserCreationForm):
         label='Correo electrónico', required=True,
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
+    # Solo alumno e instructor son opciones públicas; admin se asigna desde el panel
+    TIPOS_PUBLICOS = [
+        ('alumno', 'Alumno'),
+        ('instructor', 'Instructor'),
+    ]
     tipo_usuario = forms.ChoiceField(
-        choices=PerfilUsuario.TIPO_CHOICES, label='Tipo de usuario',
+        choices=TIPOS_PUBLICOS, label='Tipo de usuario',
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
@@ -52,9 +57,9 @@ class RegistroUsuarioForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            PerfilUsuario.objects.create(
+            PerfilUsuario.objects.update_or_create(
                 usuario=user,
-                tipo=self.cleaned_data['tipo_usuario']
+                defaults={'tipo': self.cleaned_data['tipo_usuario']}
             )
         return user
 
