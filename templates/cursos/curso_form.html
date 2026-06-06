@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block titulo %}{% if object %}Editar Curso{% else %}Nuevo Curso{% endif %}{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header fw-bold">
+                <i class="bi bi-{% if object %}pencil{% else %}plus-circle{% endif %}"></i>
+                {% if object %}Editar Curso: {{ object.nombre }}{% else %}Crear Nuevo Curso{% endif %}
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in field.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div class="form-text text-muted">{{ field.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Guardar
+                        </button>
+                        <a href="{% url 'curso_lista' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

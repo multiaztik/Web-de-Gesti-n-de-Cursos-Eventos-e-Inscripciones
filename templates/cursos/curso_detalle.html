@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ curso.nombre }}{% endblock %}
+
+{% block contenido %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'curso_lista' %}">Cursos</a></li>
+        <li class="breadcrumb-item active">{{ curso.nombre }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            {% if curso.imagen %}
+            <img src="{{ curso.imagen.url }}" class="card-img-top" style="max-height:300px;object-fit:cover;" alt="{{ curso.nombre }}">
+            {% endif %}
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h2 class="card-title mb-0">{{ curso.nombre }}</h2>
+                    <span class="badge bg-{% if curso.estado == 'activo' %}success{% elif curso.estado == 'cerrado' %}secondary{% else %}danger{% endif %} fs-6">
+                        {{ curso.get_estado_display }}
+                    </span>
+                </div>
+                <p class="card-text mt-3">{{ curso.descripcion }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-info-circle"></i> Información del curso</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="bi bi-person"></i> <strong>Instructor:</strong> {{ curso.instructor|default:"Sin asignar" }}</li>
+                <li class="list-group-item"><i class="bi bi-calendar-event"></i> <strong>Inicio:</strong> {{ curso.fecha_inicio }}</li>
+                <li class="list-group-item"><i class="bi bi-calendar-check"></i> <strong>Término:</strong> {{ curso.fecha_termino }}</li>
+                <li class="list-group-item"><i class="bi bi-people"></i> <strong>Cupo:</strong> {{ curso.cupo_disponible }} / {{ curso.cupo_maximo }} disponibles</li>
+            </ul>
+        </div>
+
+        {% if user.is_authenticated %}
+            {% if ya_inscrito %}
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle"></i> Ya estás inscrito en este curso.
+                <br><a href="{% url 'mis_inscripciones' %}" class="btn btn-sm btn-success mt-2">Ver mis inscripciones</a>
+            </div>
+            {% elif curso.estado == 'activo' and curso.tiene_cupo %}
+            <form method="post" action="{% url 'inscribirse' curso.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-person-plus"></i> Inscribirse
+                </button>
+            </form>
+            {% elif not curso.tiene_cupo %}
+            <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Curso sin cupo disponible.</div>
+            {% else %}
+            <div class="alert alert-secondary"><i class="bi bi-lock"></i> Este curso no acepta inscripciones.</div>
+            {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-box-arrow-in-right"></i> Inicia sesión para inscribirte
+        </a>
+        {% endif %}
+
+        {% if user.is_staff or user.perfil.tipo == 'admin' or user.perfil.tipo == 'instructor' %}
+        <div class="mt-3 d-grid gap-2">
+            <a href="{% url 'alumnos_inscritos' curso.pk %}" class="btn btn-outline-info btn-sm">
+                <i class="bi bi-people"></i> Ver alumnos inscritos
+            </a>
+            {% if user.is_staff or user.perfil.tipo == 'admin' %}
+            <a href="{% url 'curso_editar' curso.pk %}" class="btn btn-outline-warning btn-sm">
+                <i class="bi bi-pencil"></i> Editar curso
+            </a>
+            <a href="{% url 'curso_eliminar' curso.pk %}" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash"></i> Eliminar curso
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

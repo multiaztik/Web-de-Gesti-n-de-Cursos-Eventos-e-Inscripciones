@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block titulo %}Alumnos{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-mortarboard"></i> Alumnos</h2>
+    <a href="{% url 'alumno_crear' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Nuevo Alumno
+    </a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Buscar por nombre...">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th><th>Foto</th><th>Nombre</th><th>Matrícula</th><th>Correo</th><th>Teléfono</th><th>Registro</th><th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alumno in alumnos %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if alumno.foto %}
+                        <img src="{{ alumno.foto.url }}" alt="Foto de {{ alumno.nombre }}" width="45" height="45" style="object-fit:cover;border-radius:50%;">
+                        {% else %}
+                        <span class="text-muted"><i class="bi bi-person-circle" style="font-size:2rem;"></i></span>
+                        {% endif %}
+                    </td>
+                    <td>{{ alumno.nombre }}</td>
+                    <td>{{ alumno.matricula }}</td>
+                    <td>{{ alumno.correo }}</td>
+                    <td>{{ alumno.telefono|default:"—" }}</td>
+                    <td>{{ alumno.fecha_registro }}</td>
+                    <td>
+                        <a href="{% url 'alumno_editar' alumno.pk %}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'alumno_eliminar' alumno.pk %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted">No hay alumnos registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

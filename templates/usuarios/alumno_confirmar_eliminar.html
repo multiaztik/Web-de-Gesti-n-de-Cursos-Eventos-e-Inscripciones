@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block titulo %}Eliminar Alumno{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white fw-bold"><i class="bi bi-exclamation-triangle"></i> Confirmar eliminación</div>
+            <div class="card-body">
+                <p class="fs-5">¿Eliminar al alumno <strong>{{ object.nombre }}</strong> ({{ object.matricula }})?</p>
+                <p class="text-muted small">Se eliminarán también todas sus inscripciones.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Sí, eliminar</button>
+                        <a href="{% url 'alumno_lista' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

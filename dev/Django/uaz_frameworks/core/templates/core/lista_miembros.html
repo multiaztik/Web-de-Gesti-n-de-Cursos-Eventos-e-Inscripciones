@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<h2>Lista de miembros</h2>
+
+<a href="{% url 'crear_miembro' %}">Nuevo miembro</a>
+
+<ul>
+    {% for miembro in miembros %}
+    <li>
+        {{ miembro.nombre }} - {{ miembro.correo }}
+
+        {% if miembro.foto %}
+        <img src="{{ miembro.foto.url }}" alt="Foto de {{ miembro.nombre }}" width="100">
+        {% endif %}
+
+        {% if miembro.comprobante %}
+        <a href="{{ miembro.comprobante.url }}" target="_blank">Ver comprobante</a>
+        {% endif %}
+
+        <a href="{% url 'editar_miembro' miembro.id %}">Editar</a>
+
+        <a href="{% url 'eliminar_miembro' miembro.id %}">Eliminar</a>
+
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

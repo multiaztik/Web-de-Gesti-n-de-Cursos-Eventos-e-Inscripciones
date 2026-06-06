@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block titulo %}Mi Perfil{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card mb-4">
+            <div class="card-header fw-bold"><i class="bi bi-person-circle"></i> Mi Perfil</div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Usuario</dt>
+                    <dd class="col-sm-8">{{ user.username }}</dd>
+                    <dt class="col-sm-4">Nombre</dt>
+                    <dd class="col-sm-8">{{ user.get_full_name|default:"—" }}</dd>
+                    <dt class="col-sm-4">Correo</dt>
+                    <dd class="col-sm-8">{{ user.email|default:"—" }}</dd>
+                    <dt class="col-sm-4">Tipo</dt>
+                    <dd class="col-sm-8">
+                        {% if perfil %}
+                            <span class="badge bg-primary">{{ perfil.get_tipo_display }}</span>
+                        {% elif user.is_staff %}
+                            <span class="badge bg-danger">Administrador</span>
+                        {% else %}—{% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        {% if alumno %}
+        <div class="card mb-4">
+            <div class="card-header fw-bold"><i class="bi bi-mortarboard"></i> Datos de Alumno</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Matrícula</dt><dd class="col-sm-8">{{ alumno.matricula }}</dd>
+                    <dt class="col-sm-4">Teléfono</dt><dd class="col-sm-8">{{ alumno.telefono|default:"—" }}</dd>
+                    <dt class="col-sm-4">Registro</dt><dd class="col-sm-8">{{ alumno.fecha_registro }}</dd>
+                </dl>
+                <a href="{% url 'mis_inscripciones' %}" class="btn btn-outline-primary btn-sm mt-2">
+                    <i class="bi bi-list-check"></i> Ver mis inscripciones
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if instructor %}
+        <div class="card mb-4">
+            <div class="card-header fw-bold"><i class="bi bi-person-badge"></i> Datos de Instructor</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Especialidad</dt><dd class="col-sm-8">{{ instructor.especialidad }}</dd>
+                    <dt class="col-sm-4">Teléfono</dt><dd class="col-sm-8">{{ instructor.telefono|default:"—" }}</dd>
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

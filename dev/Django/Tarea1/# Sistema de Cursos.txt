@@ -1,0 +1,6 @@
+# Sistema de Cursos
+
+
+# 📚 Sistema de Cursos
+Lista de todos los cursos registrados
+[Ir al Panel de Administración](http://127.0.0.1:8000/admin/)

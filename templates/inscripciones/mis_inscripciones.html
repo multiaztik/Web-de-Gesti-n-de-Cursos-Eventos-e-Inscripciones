@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block titulo %}Mis Inscripciones{% endblock %}
+
+{% block contenido %}
+<h2 class="mb-4"><i class="bi bi-list-check"></i> Mis Inscripciones</h2>
+
+{% if inscripciones %}
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for insc in inscripciones %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">{{ insc.curso.nombre }}</h5>
+                    <span class="badge bg-{% if insc.estado == 'activa' %}success{% elif insc.estado == 'cancelada' %}danger{% else %}secondary{% endif %}">
+                        {{ insc.get_estado_display }}
+                    </span>
+                </div>
+                <p class="text-muted small mb-1"><i class="bi bi-person"></i> {{ insc.curso.instructor|default:"Sin instructor" }}</p>
+                <p class="text-muted small mb-1"><i class="bi bi-calendar"></i> {{ insc.curso.fecha_inicio }} — {{ insc.curso.fecha_termino }}</p>
+                <p class="text-muted small mb-2"><i class="bi bi-clock-history"></i> Inscrito el {{ insc.fecha_inscripcion|date:"d/m/Y H:i" }}</p>
+                {% if insc.evidencia %}
+                <p class="small text-success"><i class="bi bi-paperclip"></i> Evidencia subida</p>
+                {% else %}
+                <p class="small text-muted"><i class="bi bi-paperclip"></i> Sin evidencia</p>
+                {% endif %}
+            </div>
+            <div class="card-footer d-flex gap-2">
+                <a href="{% url 'curso_detalle' insc.curso.pk %}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-eye"></i> Ver curso
+                </a>
+                <a href="{% url 'subir_evidencia' insc.pk %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-upload"></i> {% if insc.evidencia %}Actualizar{% else %}Subir{% endif %} evidencia
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> No estás inscrito en ningún curso todavía.
+    <a href="{% url 'curso_lista' %}" class="alert-link">Ver cursos disponibles</a>.
+</div>
+{% endif %}
+{% endblock %}
