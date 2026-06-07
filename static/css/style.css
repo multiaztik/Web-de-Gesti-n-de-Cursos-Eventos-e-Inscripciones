@@ -1,0 +1,922 @@
+/* ==========================================================================
+   SCEA - Sistema de Gestión de Cursos - Estilos Globales
+   ========================================================================== */
+
+:root {
+    /* Paleta de colores para la pagina */
+    --bg-page: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --text-main: #0F172A;
+    --text-muted: #475569;
+    
+    --color-primary: #0F172A;
+    --color-primary-rgb: 15, 23, 42;
+    --color-accent: #6366F1;
+    --color-accent-rgb: 99, 102, 241;
+    --color-accent-hover: #4F46E5; 
+    
+    --color-success: #059669;      
+    --color-success-rgb: 5, 150, 105;
+    --color-warning: #D97706;     
+    --color-warning-rgb: 217, 119, 6;
+    --color-danger: #DC2626;       
+    --color-danger-rgb: 220, 38, 38;
+    --color-info: #0284C7;        
+    --color-info-rgb: 2, 132, 199;
+    
+    /* Fronteras y Sombras */
+    --border-color: #E2E8F0;
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --shadow-subtle: 0 4px 6px -1px rgba(15, 23, 42, 0.03), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+    
+    /* Tipografía */
+    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-body: 'Instrument Sans', sans-serif;
+}
+
+/* ==========================================================================
+   Estilos de Página & STICKY FOOTER
+   ========================================================================== */
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--bg-page) !important;
+    color: var(--text-main) !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+    flex: 1 0 auto; /* Empuja el footer hacia abajo */
+}
+
+.footer-custom {
+    flex-shrink: 0; /* Asegura que el footer no se colapse */
+}
+
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+    font-family: var(--font-display) !important;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: -0.025em;
+}
+
+h1 { font-size: 2.15rem; }
+h2 { font-size: 1.65rem; }
+h3 { font-size: 1.35rem; }
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+a:hover {
+    color: var(--color-accent-hover);
+}
+
+/* ==========================================================================
+   Sobrescritura de Variables CSS de Bootstrap
+   ========================================================================== */
+
+:root {
+    --bs-primary: var(--color-accent);
+    --bs-primary-rgb: var(--color-accent-rgb);
+    --bs-secondary: var(--text-muted);
+    --bs-success: var(--color-success);
+    --bs-success-rgb: var(--color-success-rgb);
+    --bs-info: var(--color-info);
+    --bs-info-rgb: var(--color-info-rgb);
+    --bs-warning: var(--color-warning);
+    --bs-warning-rgb: var(--color-warning-rgb);
+    --bs-danger: var(--color-danger);
+    --bs-danger-rgb: var(--color-danger-rgb);
+    --bs-light: var(--bg-page);
+    --bs-dark: var(--color-primary);
+    --bs-body-font-family: var(--font-body);
+}
+
+/* ==========================================================================
+   Barra de Navegación (Navbar)
+   ========================================================================== */
+
+.navbar-custom {
+    position: relative;
+    z-index: 1030 !important; /* Asegura que la barra de navegación y sus dropdowns queden sobre los demás elementos */
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius-md) !important;
+    padding: 0.6rem 1.25rem !important;
+    margin-top: 1rem;
+    box-shadow: var(--shadow-subtle) !important;
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .navbar-brand {
+    color: var(--text-main) !important;
+    font-weight: 800;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-custom .navbar-brand i {
+    color: var(--color-accent);
+}
+
+.navbar-custom .nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link:focus,
+.navbar-custom .nav-link.active {
+    color: var(--color-accent) !important;
+    background-color: rgba(var(--color-accent-rgb), 0.05);
+}
+
+.navbar-custom .nav-item.dropdown .dropdown-menu {
+    position: absolute; /* Previene empujar otros elementos */
+    z-index: 1040 !important; /* Prioridad por encima de la barra misma */
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-subtle);
+    background-color: var(--bg-card);
+    padding: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.navbar-custom .dropdown-item {
+    font-weight: 500;
+    font-size: 0.88rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-main);
+    transition: all 0.15s ease;
+}
+
+.navbar-custom .dropdown-item:hover {
+    background-color: rgba(var(--color-accent-rgb), 0.05);
+    color: var(--color-accent);
+}
+
+.navbar-custom .navbar-toggler {
+    border-color: var(--border-color);
+}
+
+/* ==========================================================================
+   Tarjetas (Cards)
+   ========================================================================== */
+
+.card {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius-md) !important;
+    box-shadow: var(--shadow-subtle) !important;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.05) !important;
+}
+
+.card-header {
+    background-color: rgba(15, 23, 42, 0.01) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--color-primary) !important;
+    font-family: var(--font-display);
+    font-weight: 700 !important;
+    font-size: 0.95rem;
+    padding: 1rem 1.25rem !important;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+.card-footer {
+    background-color: transparent !important;
+    border-top: 1px solid var(--border-color) !important;
+    padding: 1rem 1.5rem !important;
+}
+
+/* ==========================================================================
+   Botones (Buttons)
+   ========================================================================== */
+
+.btn {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary {
+    background-color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    color: #FFFFFF !important;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--color-accent-hover) !important;
+    border-color: var(--color-accent-hover) !important;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+    color: #FFFFFF !important;
+}
+.btn-success:hover, .btn-success:focus {
+    background-color: #047857 !important;
+    border-color: #047857 !important;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background-color: var(--color-danger) !important;
+    border-color: var(--color-danger) !important;
+    color: #FFFFFF !important;
+}
+.btn-danger:hover, .btn-danger:focus {
+    background-color: #B91C1C !important;
+    border-color: #B91C1C !important;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: var(--color-accent) !important;
+    color: #FFFFFF !important;
+}
+
+.btn-outline-secondary {
+    color: var(--text-muted) !important;
+    border-color: var(--border-color) !important;
+}
+.btn-outline-secondary:hover {
+    background-color: rgba(var(--color-accent-rgb), 0.04) !important;
+    color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+}
+
+.btn-outline-light {
+    color: #FFFFFF !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+.btn-outline-light:hover {
+    background-color: #FFFFFF !important;
+    color: var(--color-accent) !important;
+}
+
+/* ==========================================================================
+   Badges y Estados
+   ========================================================================== */
+
+.badge {
+    font-family: var(--font-display);
+    font-weight: 600;
+    padding: 0.4em 0.8em;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+}
+
+.bg-success {
+    background-color: rgba(5, 150, 105, 0.1) !important;
+    color: var(--color-success) !important;
+    border: 1px solid rgba(5, 150, 105, 0.15);
+}
+.bg-danger {
+    background-color: rgba(220, 38, 38, 0.1) !important;
+    color: var(--color-danger) !important;
+    border: 1px solid rgba(220, 38, 38, 0.15);
+}
+.bg-warning {
+    background-color: rgba(217, 119, 6, 0.1) !important;
+    color: var(--color-warning) !important;
+    border: 1px solid rgba(217, 119, 6, 0.15);
+}
+.bg-secondary {
+    background-color: rgba(71, 85, 105, 0.1) !important;
+    color: var(--text-muted) !important;
+    border: 1px solid rgba(71, 85, 105, 0.15);
+}
+.bg-primary {
+    background-color: rgba(var(--color-accent-rgb), 0.1) !important;
+    color: var(--color-accent) !important;
+    border: 1px solid rgba(var(--color-accent-rgb), 0.15);
+}
+
+/* ==========================================================================
+   Tablas (Tables)
+   ========================================================================== */
+
+.table-responsive {
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    background-color: #FFFFFF;
+}
+
+.table {
+    margin-bottom: 0;
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+.table thead.table-dark {
+    --bs-table-bg: var(--bg-page);
+    --bs-table-color: var(--color-primary);
+    font-family: var(--font-display);
+    font-weight: 700;
+}
+
+.table th {
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color) !important;
+}
+
+.table td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(var(--color-accent-rgb), 0.01) !important;
+}
+
+/* ==========================================================================
+   Formularios (Forms)
+   ========================================================================== */
+
+.form-label {
+    color: var(--color-primary);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.88rem;
+    margin-bottom: 0.4rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.92rem;
+    background-color: #FFFFFF;
+    color: var(--text-main);
+    transition: all 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.12);
+    background-color: #FFFFFF;
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   Barra Lateral (Sidebar Layout)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+    .sticky-sidebar {
+        position: sticky;
+        top: 2rem;
+        z-index: 10;
+    }
+}
+
+/* ==========================================================================
+   Hero Jumbotron y Estadísticas (Inicio)
+   ========================================================================== */
+
+.hero-jumbotron {
+    background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4F46E5 100%) !important;
+    color: #FFFFFF !important;
+    padding: 4rem 3rem !important;
+    border-radius: var(--border-radius-lg) !important;
+    margin-bottom: 3.5rem !important;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -10px rgba(var(--color-accent-rgb), 0.2);
+}
+
+.hero-jumbotron::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.hero-jumbotron h1 {
+    color: #FFFFFF !important;
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.03em;
+}
+
+.hero-jumbotron p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
+    max-width: 650px;
+    font-weight: 400;
+}
+
+/* Paneles de Estadísticas en Hero */
+.stats-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+
+.stats-card:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.stats-val {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stats-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Tarjeta de Curso
+   ========================================================================== */
+
+.curso-featured-card {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-subtle);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    margin-bottom: 2.5rem;
+}
+
+.curso-featured-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.curso-featured-img {
+    width: 40%;
+    object-fit: cover;
+    min-height: 250px;
+}
+
+.curso-featured-no-img {
+    width: 40%;
+    background-color: rgba(var(--color-accent-rgb), 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    border-right: 1px solid var(--border-color);
+}
+
+.curso-featured-body {
+    width: 60%;
+    padding: 2.25rem !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .curso-featured-card {
+        flex-direction: column;
+    }
+    .curso-featured-img, .curso-featured-no-img, .curso-featured-body {
+        width: 100%;
+    }
+    .curso-featured-img, .curso-featured-no-img {
+        height: 180px;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+}
+
+/* ==========================================================================
+   Dashboard de Búsqueda (Sidebar de Filtros)
+   ========================================================================== */
+
+.filter-sidebar {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-subtle);
+}
+
+@media (min-width: 768px) {
+    .filter-sidebar-sticky {
+        position: sticky;
+        top: 2rem;
+        z-index: 10;
+    }
+}
+
+/* ==========================================================================
+   Layout de Detalle del Curso
+   ========================================================================== */
+
+.course-detail-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+}
+
+.course-header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.course-header-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.course-header-meta-item i {
+    color: var(--color-accent);
+    font-size: 1.1rem;
+}
+
+.highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.highlight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    background-color: rgba(var(--color-accent-rgb), 0.01);
+    border: 1px dashed var(--border-color);
+    padding: 1.15rem;
+    border-radius: var(--border-radius-md);
+    transition: background-color 0.2s ease;
+}
+
+.highlight-item:hover {
+    background-color: rgba(var(--color-accent-rgb), 0.03);
+}
+
+.highlight-icon {
+    color: var(--color-accent);
+    font-size: 1.25rem;
+    margin-top: -0.1rem;
+}
+
+.highlight-text {
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--color-primary);
+}
+
+.highlight-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 0.15rem;
+}
+
+.course-desc {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.footer-custom {
+    background-color: #FFFFFF;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 2.5rem 0;
+    margin-top: 5rem;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* ==========================================================================
+   Clases de Utilidad y Reemplazo de Estilos en Línea
+   ========================================================================== */
+
+/* Contenedores e Imágenes de Cursos */
+.curso-card-img {
+    height: 160px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.curso-card-img-lg {
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.curso-card-no-img {
+    height: 160px;
+    background-color: rgba(var(--color-accent-rgb), 0.03) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.curso-card-no-img-lg {
+    height: 180px;
+    background-color: rgba(var(--color-accent-rgb), 0.03) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.curso-card-icon {
+    font-size: 2.5rem;
+    color: var(--color-accent);
+}
+
+.curso-card-icon-lg {
+    font-size: 3rem;
+    color: var(--color-accent);
+}
+
+.curso-img-detail {
+    max-height: 320px;
+    width: 100%;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Avatares */
+.avatar-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+}
+
+.avatar-icon {
+    font-size: 1.85rem;
+    color: var(--text-muted);
+}
+
+.avatar-img-lg {
+    width: 85px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+}
+
+.avatar-icon-lg {
+    font-size: 3.5rem;
+    color: var(--text-muted);
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.breadcrumb-item a {
+    color: var(--text-muted);
+}
+
+.breadcrumb-item a:hover {
+    color: var(--color-accent);
+}
+
+.breadcrumb-item.active {
+    color: var(--color-accent);
+}
+
+/* Alertas */
+.alert {
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.85rem 1.25rem;
+}
+
+.alert-success {
+    background-color: rgba(5, 150, 105, 0.06);
+    color: var(--color-success);
+    border-color: rgba(5, 150, 105, 0.15);
+}
+
+.alert-danger {
+    background-color: rgba(220, 38, 38, 0.06);
+    color: var(--color-danger);
+    border-color: rgba(220, 38, 38, 0.15);
+}
+
+.alert-warning {
+    background-color: rgba(217, 119, 6, 0.06);
+    color: #b45309;
+    border-color: rgba(217, 119, 6, 0.15);
+}
+
+.alert-info {
+    background-color: rgba(2, 132, 199, 0.06);
+    color: var(--color-info);
+    border-color: rgba(2, 132, 199, 0.15);
+}
+
+/* ==========================================================================
+   Estilos de Páginas de Autenticación (Login & Registro)
+   ========================================================================== */
+
+/* SCEA branding text above the card */
+.auth-brand-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--color-primary) !important;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.5rem;
+}
+
+.auth-brand-text {
+    font-size: 0.95rem;
+    color: var(--text-muted) !important;
+    line-height: 1.6;
+    max-width: 420px;
+    margin: 0 auto;
+    font-weight: 400;
+}
+
+.auth-benefit-icon-wrapper {
+    background-color: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    padding: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-subtle);
+    margin-right: 1.25rem;
+    flex-shrink: 0;
+}
+
+.auth-benefit-icon-wrapper i {
+    color: var(--color-accent);
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+/* Auth Card */
+.auth-card {
+    background-color: #FFFFFF !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius-lg) !important;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.05) !important;
+    padding: 2.5rem 2.25rem !important;
+    margin-top: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08) !important;
+}
+
+.auth-card-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.35rem;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.auth-card-title i {
+    color: var(--color-accent);
+}
+
+.auth-card-body {
+    padding: 0 !important;
+}
+
+.auth-card hr {
+    border-top: 1px solid var(--border-color);
+    margin: 1.5rem 0;
+    opacity: 1;
+}
+
+.auth-card .form-label {
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.85rem;
+}
+
+.auth-card .form-control {
+    background-color: #F8FAFC;
+    border-color: #E2E8F0;
+    padding: 0.7rem 0.95rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.auth-card .form-control:focus {
+    background-color: #FFFFFF;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.15);
+}
+
+.auth-card .btn-submit {
+    padding: 0.7rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: -0.01em;
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 4px 12px rgba(var(--color-accent-rgb), 0.2);
+}
+
+.auth-card .btn-submit:hover {
+    box-shadow: 0 6px 16px rgba(var(--color-accent-rgb), 0.3);
+}
+
+.auth-card-link-text {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.auth-card-link-text a {
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.auth-card-link-text a:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}

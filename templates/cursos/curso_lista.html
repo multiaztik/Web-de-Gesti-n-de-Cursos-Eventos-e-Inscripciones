@@ -2,81 +2,95 @@
 {% block titulo %}Cursos{% endblock %}
 
 {% block contenido %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2><i class="bi bi-book"></i> Cursos y Eventos</h2>
-    {% if user.is_staff or user.perfil.tipo == 'admin' %}
-    <a href="{% url 'curso_crear' %}" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> Nuevo Curso
-    </a>
-    {% endif %}
-</div>
-
-<!-- Formulario de búsqueda RF12 -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" class="row g-2">
-            <div class="col-md-5">
-                {{ form_busqueda.q }}
-            </div>
-            <div class="col-md-3">
-                {{ form_busqueda.estado }}
-            </div>
-            <div class="col-md-3">
-                {{ form_busqueda.instructor }}
-            </div>
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for curso in cursos %}
-    <div class="col">
-        <div class="card h-100">
-            {% if curso.imagen %}
-            <img src="{{ curso.imagen.url }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="{{ curso.nombre }}">
-            {% else %}
-            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height:160px;">
-                <i class="bi bi-book text-white" style="font-size:2.5rem;"></i>
-            </div>
-            {% endif %}
-            <div class="card-body">
-                <span class="badge bg-{% if curso.estado == 'activo' %}success{% elif curso.estado == 'cerrado' %}secondary{% else %}danger{% endif %} mb-2">
-                    {{ curso.get_estado_display }}
-                </span>
-                <h5 class="card-title">{{ curso.nombre }}</h5>
-                <p class="card-text text-muted small">{{ curso.descripcion|truncatewords:18 }}</p>
-                <ul class="list-unstyled small">
-                    <li><i class="bi bi-person"></i> {{ curso.instructor|default:"Sin instructor" }}</li>
-                    <li><i class="bi bi-calendar-range"></i> {{ curso.fecha_inicio }} — {{ curso.fecha_termino }}</li>
-                    <li><i class="bi bi-people"></i> {{ curso.cupo_disponible }}/{{ curso.cupo_maximo }} lugares</li>
-                </ul>
-            </div>
-            <div class="card-footer d-flex gap-2 flex-wrap">
-                <a href="{% url 'curso_detalle' curso.pk %}" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-eye"></i> Ver
-                </a>
-                {% if user.is_staff or user.perfil.tipo == 'admin' %}
-                <a href="{% url 'curso_editar' curso.pk %}" class="btn btn-outline-warning btn-sm">
-                    <i class="bi bi-pencil"></i> Editar
-                </a>
-                <a href="{% url 'alumnos_inscritos' curso.pk %}" class="btn btn-outline-info btn-sm">
-                    <i class="bi bi-people"></i> Inscritos
-                </a>
-                <a href="{% url 'curso_eliminar' curso.pk %}" class="btn btn-outline-danger btn-sm"
-                   onclick="return confirm('¿Estás seguro de eliminar el curso {{ curso.nombre }}?');">
-                    <i class="bi bi-trash"></i>
+<div class="row g-4">
+    <!-- Columna Izquierda: Filtros Verticales -->
+    <div class="col-md-3">
+        <div class="filter-sidebar filter-sidebar-sticky">
+            <h5 class="mb-3"><i class="bi bi-funnel"></i> Filtros</h5>
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label">Buscar</label>
+                    {{ form_busqueda.q }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    {{ form_busqueda.estado }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Instructor</label>
+                    {{ form_busqueda.instructor }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-2">
+                    <i class="bi bi-search"></i> Filtrar
+                </button>
+                {% if request.GET.q or request.GET.estado or request.GET.instructor %}
+                <a href="{% url 'curso_lista' %}" class="btn btn-outline-secondary w-100 mt-2">
+                    Limpiar filtros
                 </a>
                 {% endif %}
-            </div>
+            </form>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info">No se encontraron cursos con los filtros seleccionados.</div>
+
+    <!-- Columna Derecha: Listado de Cursos -->
+    <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-book"></i> Cursos y eventos</h2>
+            {% if user.is_staff or user.perfil.tipo == 'admin' %}
+            <a href="{% url 'curso_crear' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Nuevo curso
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for curso in cursos %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if curso.imagen %}
+                    <img src="{{ curso.imagen.url }}" class="curso-card-img" alt="{{ curso.nombre }}">
+                    {% else %}
+                    <div class="curso-card-no-img">
+                        <i class="bi bi-book curso-card-icon"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-{% if curso.estado == 'activo' %}success{% elif curso.estado == 'cerrado' %}secondary{% else %}danger{% endif %} mb-2">
+                            {{ curso.get_estado_display }}
+                        </span>
+                        <h5 class="card-title">{{ curso.nombre }}</h5>
+                        <p class="card-text text-muted small">{{ curso.descripcion|truncatewords:18 }}</p>
+                        <ul class="list-unstyled small mb-0 mt-3">
+                            <li class="mb-1"><i class="bi bi-person text-primary me-1"></i> {{ curso.instructor|default:"Sin instructor" }}</li>
+                            <li class="mb-1"><i class="bi bi-calendar-range text-primary me-1"></i> {{ curso.fecha_inicio }} — {{ curso.fecha_termino }}</li>
+                            <li><i class="bi bi-people text-primary me-1"></i> {{ curso.cupo_disponible }}/{{ curso.cupo_maximo }} lugares</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer d-flex gap-2 flex-wrap">
+                        <a href="{% url 'curso_detalle' curso.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-eye"></i> Ver
+                        </a>
+                        {% if user.is_staff or user.perfil.tipo == 'admin' %}
+                        <a href="{% url 'curso_editar' curso.pk %}" class="btn btn-outline-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <a href="{% url 'alumnos_inscritos' curso.pk %}" class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-people"></i> Inscritos
+                        </a>
+                        <a href="{% url 'curso_eliminar' curso.pk %}" class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('¿Estás seguro de eliminar el curso {{ curso.nombre }}?');">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No se encontraron cursos con los filtros seleccionados.</div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
 </div>
 {% endblock %}
