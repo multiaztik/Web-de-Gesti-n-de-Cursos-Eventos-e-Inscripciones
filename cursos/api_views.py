@@ -89,12 +89,28 @@ class CursoViewSet(viewsets.ModelViewSet):
         serializer = InscripcionSerializer(inscripciones, many=True)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "Curso eliminado exitosamente."},
+            status=status.HTTP_200_OK
+        )
+
 
 class AlumnoViewSet(viewsets.ModelViewSet):
     """API REST para alumnos."""
     queryset = Alumno.objects.all()
     serializer_class = AlumnoSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "Alumno eliminado exitosamente."},
+            status=status.HTTP_200_OK
+        )
 
 
 class InscripcionViewSet(viewsets.ModelViewSet):
@@ -103,9 +119,25 @@ class InscripcionViewSet(viewsets.ModelViewSet):
     serializer_class = InscripcionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "Inscripción eliminada exitosamente."},
+            status=status.HTTP_200_OK
+        )
+
 
 class InstructorViewSet(viewsets.ModelViewSet):
     """API REST para instructores."""
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "Instructor eliminado exitosamente."},
+            status=status.HTTP_200_OK
+        )
