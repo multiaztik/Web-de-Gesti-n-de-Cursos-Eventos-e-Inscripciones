@@ -10,25 +10,6 @@ from .serializers import (
 )
 
 
-class CursoViewSet(viewsets.ModelViewSet):
-    """API REST para cursos: GET, POST, PUT, PATCH, DELETE."""
-    queryset = Curso.objects.select_related('instructor').all()
-    serializer_class = CursoSerializer
-
-    def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAdminUser()]
-        return [permissions.AllowAny()]
-
-    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated, IsAdminOrCourseInstructor])
-    def inscritos(self, request, pk=None):
-        """Endpoint extra: /api/cursos/{id}/inscritos/"""
-        curso = self.get_object()
-        inscripciones = Inscripcion.objects.filter(curso=curso).select_related('alumno')
-        serializer = InscripcionSerializer(inscripciones, many=True)
-        return Response(serializer.data)
-
-
 class IsAdminOrCourseInstructor(permissions.BasePermission):
     """
     Permiso que autoriza únicamente al administrador o al instructor
@@ -88,6 +69,25 @@ class IsOwnerOrAdminOrReadOnly(permissions.BasePermission):
                 return True
             
         return False
+
+
+class CursoViewSet(viewsets.ModelViewSet):
+    """API REST para cursos: GET, POST, PUT, PATCH, DELETE."""
+    queryset = Curso.objects.select_related('instructor').all()
+    serializer_class = CursoSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAdminUser()]
+        return [permissions.AllowAny()]
+
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated, IsAdminOrCourseInstructor])
+    def inscritos(self, request, pk=None):
+        """Endpoint extra: /api/cursos/{id}/inscritos/"""
+        curso = self.get_object()
+        inscripciones = Inscripcion.objects.filter(curso=curso).select_related('alumno')
+        serializer = InscripcionSerializer(inscripciones, many=True)
+        return Response(serializer.data)
 
 
 class AlumnoViewSet(viewsets.ModelViewSet):
