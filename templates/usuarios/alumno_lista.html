@@ -32,9 +32,9 @@
                     <td>{{ forloop.counter }}</td>
                     <td>
                         {% if alumno.foto %}
-                        <img src="{{ alumno.foto.url }}" alt="Foto de {{ alumno.nombre }}" width="45" height="45" style="object-fit:cover;border-radius:50%;">
+                        <img src="{{ alumno.foto.url }}" alt="Foto de {{ alumno.nombre }}" class="avatar-img">
                         {% else %}
-                        <span class="text-muted"><i class="bi bi-person-circle" style="font-size:2rem;"></i></span>
+                        <span class="text-muted"><i class="bi bi-person-circle avatar-icon"></i></span>
                         {% endif %}
                     </td>
                     <td>{{ alumno.nombre }}</td>

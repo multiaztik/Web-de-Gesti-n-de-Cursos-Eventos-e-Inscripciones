@@ -2,58 +2,77 @@
 {% block titulo %}Inicio{% endblock %}
 
 {% block contenido %}
-<div class="p-5 mb-4 bg-dark text-white rounded-3">
-    <div class="container-fluid py-3">
-        <h1 class="display-5 fw-bold"><i class="bi bi-mortarboard-fill"></i> Sistema de Gestión de Cursos</h1>
-        <p class="col-md-8 fs-4">Consulta y regístrate en cursos y eventos académicos disponibles.</p>
-        <a href="{% url 'curso_lista' %}" class="btn btn-primary btn-lg me-2">
-            <i class="bi bi-search"></i> Ver Cursos
-        </a>
-        {% if not user.is_authenticated %}
-        <a href="{% url 'registro' %}" class="btn btn-outline-light btn-lg">
-            <i class="bi bi-person-plus"></i> Registrarse
-        </a>
-        {% endif %}
-    </div>
-</div>
+<h2 class="mb-4">Cursos destacados</h2>
 
-<h2 class="mb-3">Cursos Disponibles</h2>
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for curso in cursos_activos %}
-    <div class="col">
-        <div class="card h-100">
-            {% if curso.imagen %}
-            <img src="{{ curso.imagen.url }}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{{ curso.nombre }}">
+{% if cursos_activos %}
+    {% with destacado=cursos_activos.0 %}
+        <!-- Horizontal Featured Card (Destacado) -->
+        <div class="curso-featured-card">
+            {% if destacado.imagen %}
+            <img src="{{ destacado.imagen.url }}" class="curso-featured-img" alt="{{ destacado.nombre }}">
             {% else %}
-            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height:180px;">
-                <i class="bi bi-book text-white" style="font-size:3rem;"></i>
+            <div class="curso-featured-no-img">
+                <i class="bi bi-book curso-card-icon-lg"></i>
             </div>
             {% endif %}
-            <div class="card-body">
-                <span class="badge bg-success mb-2">{{ curso.get_estado_display }}</span>
-                <h5 class="card-title">{{ curso.nombre }}</h5>
-                <p class="card-text text-muted small">{{ curso.descripcion|truncatewords:20 }}</p>
-                <p class="small mb-1"><i class="bi bi-person"></i> {{ curso.instructor|default:"Sin instructor" }}</p>
-                <p class="small mb-1"><i class="bi bi-calendar"></i> {{ curso.fecha_inicio }} — {{ curso.fecha_termino }}</p>
-                <p class="small"><i class="bi bi-people"></i> Cupo: {{ curso.cupo_disponible }}/{{ curso.cupo_maximo }} disponibles</p>
-            </div>
-            <div class="card-footer">
-                <a href="{% url 'curso_detalle' curso.pk %}" class="btn btn-outline-primary btn-sm">
-                    Ver detalle <i class="bi bi-arrow-right"></i>
+            <div class="curso-featured-body">
+                <span class="badge bg-success mb-2 align-self-start">{{ destacado.get_estado_display }}</span>
+                <h3>{{ destacado.nombre }}</h3>
+                <p class="text-muted small">{{ destacado.descripcion|truncatewords:40 }}</p>
+                <div class="row small g-2 mb-3">
+                    <div class="col-sm-6"><i class="bi bi-person text-primary"></i> <strong>Instructor:</strong> {{ destacado.instructor|default:"Sin instructor" }}</div>
+                    <div class="col-sm-6"><i class="bi bi-calendar text-primary"></i> <strong>Fechas:</strong> {{ destacado.fecha_inicio }} — {{ destacado.fecha_termino }}</div>
+                    <div class="col-sm-6"><i class="bi bi-people text-primary"></i> <strong>Cupo:</strong> {{ destacado.cupo_disponible }}/{{ destacado.cupo_maximo }} disponibles</div>
+                </div>
+                <a href="{% url 'curso_detalle' destacado.pk %}" class="btn btn-primary btn-sm align-self-start">
+                    Ver detalle del curso <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
         </div>
-    </div>
-    {% empty %}
+    {% endwith %}
+
+    {% if cursos_activos|length > 1 %}
+        <h3 class="mb-4 mt-5">Otros cursos disponibles</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for curso in cursos_activos %}
+                {% if not forloop.first %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if curso.imagen %}
+                        <img src="{{ curso.imagen.url }}" class="curso-card-img-lg" alt="{{ curso.nombre }}">
+                        {% else %}
+                        <div class="curso-card-no-img-lg">
+                            <i class="bi bi-book curso-card-icon-lg"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">{{ curso.get_estado_display }}</span>
+                            <h5 class="card-title">{{ curso.nombre }}</h5>
+                            <p class="card-text text-muted small">{{ curso.descripcion|truncatewords:18 }}</p>
+                            <p class="small mb-1"><i class="bi bi-person"></i> {{ curso.instructor|default:"Sin instructor" }}</p>
+                            <p class="small mb-1"><i class="bi bi-calendar"></i> {{ curso.fecha_inicio }}</p>
+                            <p class="small"><i class="bi bi-people"></i> Cupo: {{ curso.cupo_disponible }}/{{ curso.cupo_maximo }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'curso_detalle' curso.pk %}" class="btn btn-outline-primary btn-sm">
+                                Ver detalle <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% else %}
     <div class="col-12">
         <p class="text-muted">No hay cursos activos en este momento.</p>
     </div>
-    {% endfor %}
-</div>
+{% endif %}
 
 {% if cursos_activos %}
-<div class="text-center mt-4">
-    <a href="{% url 'curso_lista' %}" class="btn btn-secondary">Ver todos los cursos</a>
+<div class="text-center mt-5">
+    <a href="{% url 'curso_lista' %}" class="btn btn-outline-primary">Ver todos los cursos</a>
 </div>
 {% endif %}
 {% endblock %}
