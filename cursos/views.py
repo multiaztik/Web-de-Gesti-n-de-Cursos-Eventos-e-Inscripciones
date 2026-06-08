@@ -50,6 +50,7 @@ class CursoDetailView(DetailView):
     context_object_name = 'curso'
 
     def get_context_data(self, **kwargs):
+        from django.core.exceptions import ObjectDoesNotExist
         ctx = super().get_context_data(**kwargs)
         curso = self.get_object()
         alumno = None
@@ -58,7 +59,7 @@ class CursoDetailView(DetailView):
             try:
                 alumno = self.request.user.alumno
                 ya_inscrito = curso.inscripciones.filter(alumno=alumno, estado='activa').exists()
-            except Exception:
+            except (AttributeError, ObjectDoesNotExist):
                 pass
         ctx['ya_inscrito'] = ya_inscrito
         ctx['alumno'] = alumno
