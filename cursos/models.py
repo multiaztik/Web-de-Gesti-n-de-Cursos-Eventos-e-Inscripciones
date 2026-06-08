@@ -45,3 +45,11 @@ class Curso(models.Model):
 
     def acepta_inscripciones(self):
         return self.estado == 'activo' and self.tiene_cupo()
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        super().clean()
+        if self.fecha_inicio and self.fecha_termino and self.fecha_termino < self.fecha_inicio:
+            raise ValidationError(
+                {'fecha_termino': 'La fecha de término no puede ser anterior a la fecha de inicio.'}
+            )
