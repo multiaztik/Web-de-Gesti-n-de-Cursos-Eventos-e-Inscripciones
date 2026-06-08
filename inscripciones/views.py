@@ -89,18 +89,17 @@ def alumnos_inscritos(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
 
     # Solo admin o el instructor del curso
+    from django.core.exceptions import ObjectDoesNotExist
     es_admin = False
     es_instructor_del_curso = False
     try:
-        perfil = request.user.perfil
-        es_admin = perfil.es_admin()
-        if perfil.es_instructor():
-            try:
-                es_instructor_del_curso = (curso.instructor == request.user.instructor)
-            except Exception:
-                pass
-    except PerfilUsuario.DoesNotExist:
-        es_admin = request.user.is_staff
+        if request.user.is_staff or request.user.perfil.es_admin():
+            es_admin = True
+        if request.user.perfil.es_instructor() and curso.instructor == request.user.instructor:
+            es_instructor_del_curso = True
+    except (AttributeError, ObjectDoesNotExist):
+        if request.user.is_staff:
+            es_admin = True
 
     if not (es_admin or es_instructor_del_curso):
         messages.error(request, 'No tienes permiso para ver esta información.')

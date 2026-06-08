@@ -15,6 +15,8 @@ from cursos.models import Curso
 from inscripciones.models import Inscripcion
 from datetime import date
 
+from django.db import connection
+
 print("Limpiando datos anteriores...")
 Inscripcion.objects.all().delete()
 Curso.objects.all().delete()
@@ -22,6 +24,12 @@ Alumno.objects.all().delete()
 Instructor.objects.all().delete()
 PerfilUsuario.objects.all().delete()
 User.objects.filter(is_superuser=False).delete()
+
+# Resetear contadores de autoincremento en sqlite
+if connection.vendor == 'sqlite':
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM sqlite_sequence;")
+    print("Contadores de autoincremento reiniciados.")
 
 # Superusuario admin
 if not User.objects.filter(username='admin').exists():

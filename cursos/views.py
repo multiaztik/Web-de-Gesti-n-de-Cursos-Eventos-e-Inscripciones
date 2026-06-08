@@ -50,6 +50,7 @@ class CursoDetailView(DetailView):
     context_object_name = 'curso'
 
     def get_context_data(self, **kwargs):
+        from django.core.exceptions import ObjectDoesNotExist
         ctx = super().get_context_data(**kwargs)
         curso = self.get_object()
         alumno = None
@@ -58,7 +59,7 @@ class CursoDetailView(DetailView):
             try:
                 alumno = self.request.user.alumno
                 ya_inscrito = curso.inscripciones.filter(alumno=alumno, estado='activa').exists()
-            except Exception:
+            except (AttributeError, ObjectDoesNotExist):
                 pass
         ctx['ya_inscrito'] = ya_inscrito
         ctx['alumno'] = alumno
@@ -67,6 +68,7 @@ class CursoDetailView(DetailView):
 
 class CursoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """RF05: Crear curso (solo admin)."""
+    raise_exception = True
     model = Curso
     form_class = CursoForm
     template_name = 'cursos/curso_form.html'
@@ -89,6 +91,7 @@ class CursoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class CursoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """RF05: Editar curso (solo admin)."""
+    raise_exception = True
     model = Curso
     form_class = CursoForm
     template_name = 'cursos/curso_form.html'
@@ -107,6 +110,7 @@ class CursoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class CursoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """RF05: Eliminar curso (solo admin — RF15, Regla 7)."""
+    raise_exception = True
     model = Curso
     template_name = 'cursos/curso_confirmar_eliminar.html'
     success_url = reverse_lazy('curso_lista')
