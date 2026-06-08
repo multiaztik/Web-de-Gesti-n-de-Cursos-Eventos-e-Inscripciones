@@ -52,3 +52,15 @@ class InscripcionSerializer(serializers.ModelSerializer):
         fields = ['id', 'alumno', 'alumno_nombre', 'curso', 'curso_nombre',
                   'fecha_inscripcion', 'estado', 'evidencia']
         read_only_fields = ['fecha_inscripcion']
+
+    def validate(self, data):
+        curso = data.get('curso')
+        # Solo validar al crear una nueva inscripción (no al actualizar)
+        if not self.instance:
+            if curso.estado == 'cancelado':
+                raise serializers.ValidationError('Este curso está cancelado y no acepta inscripciones.')
+            if curso.estado == 'cerrado':
+                raise serializers.ValidationError('Este curso está cerrado y no acepta inscripciones.')
+            if not curso.tiene_cupo():
+                raise serializers.ValidationError('Lo sentimos, el curso ha alcanzado su cupo máximo.')
+        return data
