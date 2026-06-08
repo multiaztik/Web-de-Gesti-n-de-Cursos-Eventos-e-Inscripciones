@@ -20,34 +20,39 @@ class CursoViewSet(viewsets.ModelViewSet):
             return [permissions.IsAdminUser()]
         return [permissions.AllowAny()]
 
-    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated, IsAdminOrCourseInstructor])
     def inscritos(self, request, pk=None):
-        """Endpoint extra: /api/cursos/{id}/inscritos/ (solo admin o instructor asignado)"""
+        """Endpoint extra: /api/cursos/{id}/inscritos/"""
         curso = self.get_object()
-        
-        # Validar permisos de la regla de negocio 6
-        es_admin = False
-        es_instructor_del_curso = False
-        try:
-            perfil = request.user.perfil
-            es_admin = perfil.es_admin()
-            if perfil.es_instructor():
-                try:
-                    es_instructor_del_curso = (curso.instructor == request.user.instructor)
-                except Exception:
-                    pass
-        except Exception:
-            es_admin = request.user.is_staff
-
-        if not (es_admin or es_instructor_del_curso):
-            return Response(
-                {"detail": "No tienes permiso para ver esta información."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
         inscripciones = Inscripcion.objects.filter(curso=curso).select_related('alumno')
         serializer = InscripcionSerializer(inscripciones, many=True)
         return Response(serializer.data)
+
+
+class IsAdminOrCourseInstructor(permissions.BasePermission):
+    """
+    Permiso que autoriza únicamente al administrador o al instructor
+    que imparte el curso específico.
+    """
+    def has_object_permission(self, request, view, obj):
+        from django.core.exceptions import ObjectDoesNotExist
+        # 1. Verificar si el usuario está autenticado
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        # 2. Verificar si es administrador
+        try:
+            if request.user.is_staff or request.user.perfil.es_admin():
+                return True
+        except (AttributeError, ObjectDoesNotExist):
+            if request.user.is_staff:
+                return True
+
+        # 3. Verificar si es el instructor del curso (el objeto 'obj' es una instancia de Curso)
+        try:
+            return obj.instructor == request.user.instructor
+        except (AttributeError, ObjectDoesNotExist):
+            return False
 
 
 class IsOwnerOrAdminOrReadOnly(permissions.BasePermission):
@@ -56,25 +61,31 @@ class IsOwnerOrAdminOrReadOnly(permissions.BasePermission):
     o los administradores lo editen.
     """
     def has_object_permission(self, request, view, obj):
+        from django.core.exceptions import ObjectDoesNotExist
         # Lectura permitida para cualquier petición segura (GET, HEAD, OPTIONS)
         if request.method in permissions.SAFE_METHODS:
             return True
             
         # Permitir si el usuario es administrador
-        if request.user and (request.user.is_staff or (hasattr(request.user, 'perfil') and request.user.perfil.es_admin())):
+        try:
+            if request.user and (request.user.is_staff or request.user.perfil.es_admin()):
+                return True
+        except (AttributeError, ObjectDoesNotExist):
+            if request.user and request.user.is_staff:
+                return True
+            
+        # Comprobar propiedad basándose en atributos comunes del objeto
+        # Caso 1: El objeto tiene directamente un atributo 'usuario' (e.g. Alumno, Instructor)
+        usuario_propietario = getattr(obj, 'usuario', None)
+        if usuario_propietario and usuario_propietario == request.user:
             return True
             
-        # Validar si es el alumno dueño del perfil
-        if isinstance(obj, Alumno) and obj.usuario == request.user:
-            return True
-            
-        # Validar si es el instructor dueño del perfil
-        if isinstance(obj, Instructor) and obj.usuario == request.user:
-            return True
-            
-        # Validar si es el alumno dueño de la inscripción
-        if isinstance(obj, Inscripcion) and obj.alumno.usuario == request.user:
-            return True
+        # Caso 2: El objeto tiene un atributo 'alumno' (e.g. Inscripcion)
+        alumno_relacionado = getattr(obj, 'alumno', None)
+        if alumno_relacionado:
+            usuario_alumno = getattr(alumno_relacionado, 'usuario', None)
+            if usuario_alumno and usuario_alumno == request.user:
+                return True
             
         return False
 
