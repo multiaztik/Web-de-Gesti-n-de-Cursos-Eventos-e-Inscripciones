@@ -67,6 +67,7 @@ class CursoDetailView(DetailView):
 
 class CursoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """RF05: Crear curso (solo admin)."""
+    raise_exception = True
     model = Curso
     form_class = CursoForm
     template_name = 'cursos/curso_form.html'
@@ -89,6 +90,7 @@ class CursoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class CursoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """RF05: Editar curso (solo admin)."""
+    raise_exception = True
     model = Curso
     form_class = CursoForm
     template_name = 'cursos/curso_form.html'
@@ -107,6 +109,7 @@ class CursoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class CursoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """RF05: Eliminar curso (solo admin — RF15, Regla 7)."""
+    raise_exception = True
     model = Curso
     template_name = 'cursos/curso_confirmar_eliminar.html'
     success_url = reverse_lazy('curso_lista')

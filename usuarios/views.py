@@ -94,6 +94,7 @@ class AlumnoListView(LoginRequiredMixin, ListView):
 
 
 class AlumnoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    raise_exception = True
     model = Alumno
     form_class = AlumnoForm
     template_name = 'usuarios/alumno_form.html'
@@ -115,6 +116,7 @@ class AlumnoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 
 class AlumnoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    raise_exception = True
     model = Alumno
     form_class = AlumnoForm
     template_name = 'usuarios/alumno_form.html'
@@ -132,6 +134,7 @@ class AlumnoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class AlumnoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    raise_exception = True
     model = Alumno
     template_name = 'usuarios/alumno_confirmar_eliminar.html'
     success_url = reverse_lazy('alumno_lista')
@@ -156,6 +159,7 @@ class InstructorListView(LoginRequiredMixin, ListView):
 
 
 class InstructorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    raise_exception = True
     model = Instructor
     form_class = InstructorForm
     template_name = 'usuarios/instructor_form.html'
@@ -173,6 +177,7 @@ class InstructorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 
 class InstructorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    raise_exception = True
     model = Instructor
     form_class = InstructorForm
     template_name = 'usuarios/instructor_form.html'
@@ -190,6 +195,7 @@ class InstructorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class InstructorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    raise_exception = True
     model = Instructor
     template_name = 'usuarios/instructor_confirmar_eliminar.html'
     success_url = reverse_lazy('instructor_lista')
