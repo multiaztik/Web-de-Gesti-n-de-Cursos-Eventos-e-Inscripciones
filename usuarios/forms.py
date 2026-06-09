@@ -5,7 +5,7 @@ from .models import PerfilUsuario, Alumno, Instructor
 
 
 class RegistroUsuarioForm(UserCreationForm):
-    """Formulario de registro con nombre, correo y tipo de usuario."""
+    """Formulario de registro con nombre y correo para alumnos."""
     first_name = forms.CharField(
         max_length=100, label='Nombre', required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
@@ -17,15 +17,6 @@ class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(
         label='Correo electrónico', required=True,
         widget=forms.EmailInput(attrs={'class': 'form-control'})
-    )
-    # Solo alumno e instructor son opciones públicas; admin se asigna desde el panel
-    TIPOS_PUBLICOS = [
-        ('alumno', 'Alumno'),
-        ('instructor', 'Instructor'),
-    ]
-    tipo_usuario = forms.ChoiceField(
-        choices=TIPOS_PUBLICOS, label='Tipo de usuario',
-        widget=forms.Select(attrs={'class': 'form-select'})
     )
 
     class Meta:
@@ -59,7 +50,15 @@ class RegistroUsuarioForm(UserCreationForm):
             user.save()
             PerfilUsuario.objects.update_or_create(
                 usuario=user,
-                defaults={'tipo': self.cleaned_data['tipo_usuario']}
+                defaults={'tipo': 'alumno'}
+            )
+            # Crear perfil de Alumno asociado automáticamente
+            Alumno.objects.create(
+                usuario=user,
+                nombre=f"{user.first_name} {user.last_name}".strip() or user.username,
+                correo=user.email,
+                matricula=f"AL{user.id:04d}",
+                telefono=""
             )
         return user
 

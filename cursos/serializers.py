@@ -8,6 +8,9 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
         fields = ['id', 'nombre', 'correo', 'especialidad', 'telefono']
+        extra_kwargs = {
+            'nombre': {'min_length': 3}
+        }
 
 
 class CursoSerializer(serializers.ModelSerializer):
@@ -21,6 +24,9 @@ class CursoSerializer(serializers.ModelSerializer):
             'cupo_maximo', 'cupo_disponible', 'instructor', 'instructor_nombre',
             'estado', 'imagen',
         ]
+        extra_kwargs = {
+            'nombre': {'min_length': 3}
+        }
 
     def validate(self, data):
         fecha_inicio = data.get('fecha_inicio')
@@ -36,11 +42,52 @@ class CursoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('El cupo máximo debe ser mayor que cero.')
         return value
 
+    def validate_imagen(self, value):
+        if value:
+            if value.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError('La imagen no debe superar los 5 MB.')
+            import os
+            ext = os.path.splitext(value.name)[1].lower()
+            if ext not in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
+                raise serializers.ValidationError(
+                    'Solo se permiten imágenes JPG, PNG, GIF o WebP.'
+                )
+        return value
+
 
 class AlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alumno
         fields = ['id', 'nombre', 'correo', 'matricula', 'telefono', 'fecha_registro']
+        extra_kwargs = {
+            'nombre': {'min_length': 3}
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request and request.user:
+            is_admin = request.user.is_staff
+            try:
+                if hasattr(request.user, 'perfil') and request.user.perfil.es_admin():
+                    is_admin = True
+            except Exception:
+                pass
+            if not is_admin:
+                self.fields['matricula'].read_only = True
+
+    def validate_foto(self, value):
+        if value:
+            if value.size > 2 * 1024 * 1024:
+                raise serializers.ValidationError('La imagen no debe superar los 2 MB.')
+            import os
+            ext = os.path.splitext(value.name)[1].lower()
+            if ext not in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
+                raise serializers.ValidationError(
+                    'Solo se permiten imágenes JPG, PNG, GIF o WebP.'
+                )
+        return value
+
 
 
 class InscripcionSerializer(serializers.ModelSerializer):
@@ -64,3 +111,15 @@ class InscripcionSerializer(serializers.ModelSerializer):
             if not curso.tiene_cupo():
                 raise serializers.ValidationError('Lo sentimos, el curso ha alcanzado su cupo máximo.')
         return data
+
+    def validate_evidencia(self, value):
+        if value:
+            if value.size > 10 * 1024 * 1024:
+                raise serializers.ValidationError('El archivo no debe superar los 10 MB.')
+            import os
+            ext = os.path.splitext(value.name)[1].lower()
+            if ext not in ['.pdf', '.png', '.jpg', '.jpeg', '.doc', '.docx']:
+                raise serializers.ValidationError(
+                    'Extensión de archivo no permitida. Solo se permiten archivos PDF, imágenes o Word.'
+                )
+        return value
