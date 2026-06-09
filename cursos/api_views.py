@@ -79,6 +79,8 @@ class CursoViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [permissions.IsAdminUser()]
+        if self.action == 'inscritos':
+            return [permissions.IsAuthenticated(), IsAdminOrCourseInstructor()]
         return [permissions.AllowAny()]
 
     @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated, IsAdminOrCourseInstructor])
