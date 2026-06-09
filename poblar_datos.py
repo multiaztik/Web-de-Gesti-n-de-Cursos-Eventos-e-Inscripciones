@@ -42,14 +42,17 @@ if not User.objects.filter(username='admin').exists():
 
 # Instructores
 inst1 = Instructor.objects.create(
+    id=1,
     nombre='Dr. Carlos Ramírez', correo='carlos@scea.mx',
     especialidad='Programación Web', telefono='4921234567'
 )
 inst2 = Instructor.objects.create(
+    id=2,
     nombre='Mtra. Laura Hernández', correo='laura@scea.mx',
     especialidad='Bases de Datos', telefono='4927654321'
 )
 inst3 = Instructor.objects.create(
+    id=3,
     nombre='Ing. Roberto Pérez', correo='roberto@scea.mx',
     especialidad='Redes y Seguridad', telefono='4921112233'
 )
@@ -63,6 +66,7 @@ inst1.save()
 
 # Cursos
 c1 = Curso.objects.create(
+    id=1,
     nombre='Desarrollo Web con Django',
     descripcion='Aprende a construir aplicaciones web completas usando Django y Python. '
                 'Cubriremos modelos, vistas, templates, formularios y REST APIs.',
@@ -70,18 +74,21 @@ c1 = Curso.objects.create(
     cupo_maximo=20, instructor=inst1, estado='activo'
 )
 c2 = Curso.objects.create(
+    id=2,
     nombre='Bases de Datos Relacionales',
     descripcion='Fundamentos de diseño y administración de bases de datos con SQL y PostgreSQL.',
     fecha_inicio=date(2026, 7, 15), fecha_termino=date(2026, 9, 15),
     cupo_maximo=15, instructor=inst2, estado='activo'
 )
 c3 = Curso.objects.create(
+    id=3,
     nombre='Seguridad Informática',
     descripcion='Conceptos básicos de seguridad en redes, criptografía y ethical hacking.',
     fecha_inicio=date(2026, 6, 1), fecha_termino=date(2026, 6, 30),
     cupo_maximo=10, instructor=inst3, estado='cerrado'
 )
 c4 = Curso.objects.create(
+    id=4,
     nombre='Inteligencia Artificial con Python',
     descripcion='Introducción a machine learning y deep learning con scikit-learn y TensorFlow.',
     fecha_inicio=date(2026, 8, 1), fecha_termino=date(2026, 10, 31),
@@ -89,11 +96,11 @@ c4 = Curso.objects.create(
 )
 
 # Alumnos
-a1 = Alumno.objects.create(nombre='Ana García López', correo='ana@correo.mx',
+a1 = Alumno.objects.create(id=1, nombre='Ana García López', correo='ana@correo.mx',
                              matricula='2021001', telefono='4921111111')
-a2 = Alumno.objects.create(nombre='Luis Martínez Torres', correo='luis@correo.mx',
+a2 = Alumno.objects.create(id=2, nombre='Luis Martínez Torres', correo='luis@correo.mx',
                              matricula='2021002', telefono='4922222222')
-a3 = Alumno.objects.create(nombre='María Rodríguez Sánchez', correo='maria@correo.mx',
+a3 = Alumno.objects.create(id=3, nombre='María Rodríguez Sánchez', correo='maria@correo.mx',
                              matricula='2021003', telefono='4923333333')
 
 # Usuarios alumno
@@ -106,10 +113,10 @@ for alumno, username in [(a1, 'ana'), (a2, 'luis'), (a3, 'maria')]:
     alumno.save()
 
 # Inscripciones de prueba
-Inscripcion.objects.create(alumno=a1, curso=c1)
-Inscripcion.objects.create(alumno=a1, curso=c2)
-Inscripcion.objects.create(alumno=a2, curso=c1)
-Inscripcion.objects.create(alumno=a3, curso=c4)
+Inscripcion.objects.create(id=1, alumno=a1, curso=c1)
+Inscripcion.objects.create(id=2, alumno=a1, curso=c2)
+Inscripcion.objects.create(id=3, alumno=a2, curso=c1)
+Inscripcion.objects.create(id=4, alumno=a3, curso=c4)
 
 print("\nDatos cargados exitosamente:")
 print(f"  Instructores: {Instructor.objects.count()}")

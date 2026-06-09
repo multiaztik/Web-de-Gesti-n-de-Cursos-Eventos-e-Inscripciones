@@ -94,18 +94,55 @@ class AlumnoViewSet(viewsets.ModelViewSet):
     """API REST para alumnos."""
     queryset = Alumno.objects.all()
     serializer_class = AlumnoSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
+
+    def get_permissions(self):
+        if self.action in ['create', 'destroy']:
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticatedOrReadOnly(), IsOwnerOrAdminOrReadOnly()]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "Alumno eliminado exitosamente."},
+            status=status.HTTP_200_OK
+        )
 
 
 class InscripcionViewSet(viewsets.ModelViewSet):
     """API REST para inscripciones."""
     queryset = Inscripcion.objects.select_related('alumno', 'curso').all()
     serializer_class = InscripcionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
+
+    def get_permissions(self):
+        if self.action == 'destroy':
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticatedOrReadOnly(), IsOwnerOrAdminOrReadOnly()]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "Inscripción eliminada exitosamente."},
+            status=status.HTTP_200_OK
+        )
 
 
 class InstructorViewSet(viewsets.ModelViewSet):
     """API REST para instructores."""
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrAdminOrReadOnly]
+
+    def get_permissions(self):
+        if self.action in ['create', 'destroy']:
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticatedOrReadOnly(), IsOwnerOrAdminOrReadOnly()]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "Instructor eliminado exitosamente."},
+            status=status.HTTP_200_OK
+        )
+
