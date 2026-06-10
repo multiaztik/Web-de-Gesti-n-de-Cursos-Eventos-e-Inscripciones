@@ -30,6 +30,7 @@ Una institución educativa necesita centralizar la gestión de sus cursos y even
 ├── usuarios/            # Modelos: PerfilUsuario, Alumno, Instructor + autenticación + CRUD
 ├── cursos/              # Modelo Curso + vistas CBV + formularios + serializers + API
 ├── inscripciones/       # Modelo Inscripcion + inscripción, evidencias, lista inscritos
+├── tests/               # Pruebas automatizadas
 ├── templates/           # Plantillas HTML con Bootstrap 5
 ├── static/              # Archivos estáticos (CSS, JS)
 ├── media/               # Archivos subidos por usuarios (generado al correr)
@@ -139,6 +140,12 @@ Base URL: `/api/`
 | `/api/instructores/` | GET, POST | Lista y creación de instructores |
 
 La API es navegable desde el propio navegador en [http://127.0.0.1:8000/api/](http://127.0.0.1:8000/api/)
+
+## Ejecutar pruebas con Selenium
+Para correr las pruebas en Google Chrome:
+```bash
+.\.venv\Scripts\pytest tests/test_selenium.py -v
+```
 
 ## Reglas de negocio principales
 
