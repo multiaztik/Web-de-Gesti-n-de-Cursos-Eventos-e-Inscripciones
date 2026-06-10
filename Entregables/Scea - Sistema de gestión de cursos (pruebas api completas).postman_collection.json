@@ -1,0 +1,971 @@
+{
+  "info": {
+    "_postman_id": "955d53c1-d454-4bcb-b937-9581c31d1c3a",
+    "name": "Scea - Sistema de gestión de cursos (pruebas api completas)",
+    "description": "Para correr la colección completa y probar todos los endpoint se puede correr el script con datos de prueba llamado \"poblar_datos.py\", de lo contrario si se desea probar uno a uno manualmente los endpoints, asegúrese de contar con registros válidos en la base de datos o de configurar manualmente las variables de la colección (`curso_id`, `alumno_id`, `inscripcion_id`, `instructor_id`) con IDs existentes en su entorno, ya que las peticiones al final de la colección eliminan los registros temporales creados.\n\nColección de pruebas completa para la api rest de SCEA. Incluye todas las operaciones CRUD y endpoints disponibles para cursos, alumnos, inscripciones e instructores.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44644855",
+    "_collection_link": "https://go.postman.co/collection/44644855-955d53c1-d454-4bcb-b937-9581c31d1c3a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Cursos",
+      "item": [
+        {
+          "name": "Listar cursos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cursos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                ""
+              ]
+            },
+            "description": "Listado público de todos los cursos."
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de curso",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cursos/{{curso_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{curso_id}}",
+                ""
+              ]
+            },
+            "description": "Detalle de un curso específico por ID (público)."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear curso (requiere admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"curso_id_creado\", jsonData.id.toString());",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Curso nuevo\",\n    \"descripcion\": \"Creado desde las pruebas de postman\",\n    \"fecha_inicio\": \"2026-07-01\",\n    \"fecha_termino\": \"2026-08-01\",\n    \"cupo_maximo\": 15,\n    \"estado\": \"activo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cursos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                ""
+              ]
+            },
+            "description": "Crear nuevo curso. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar curso (requiere admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Curso modificado desde api\",\n    \"descripcion\": \"Descripción modificada\",\n    \"fecha_inicio\": \"2026-07-01\",\n    \"fecha_termino\": \"2026-08-15\",\n    \"cupo_maximo\": 25,\n    \"estado\": \"activo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cursos/{{curso_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{curso_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Actualización completa del curso. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar curso parcialmente (requiere admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"cupo_maximo\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cursos/{{curso_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{curso_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Actualización parcial del curso. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Alumnos inscritos en curso (requiere admin o instructor)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cursos/{{curso_id}}/inscritos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{curso_id}}",
+                "inscritos",
+                ""
+              ]
+            },
+            "description": "Ver alumnos inscritos en un curso. Requiere Admin o Instructor."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Alumnos",
+      "item": [
+        {
+          "name": "Listar alumnos (requiere admin o instructor)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "carlos",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alumnos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alumnos",
+                ""
+              ]
+            },
+            "description": "Listado de todos los alumnos. Requiere Admin o Instructor."
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de alumno (requiere propietario, instructor o admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "ana",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alumnos/{{alumno_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alumnos",
+                "{{alumno_id}}",
+                ""
+              ]
+            },
+            "description": "Detalles de un alumno. Requiere ser el mismo Alumno, Instructor o Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear alumno (requiere admin)",
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"alumno_id_creado\", jsonData.id.toString());",
+                  "}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Alumno de preba\",\n    \"correo\": \"prueba@ejemplo.com\",\n    \"matricula\": \"PM2026\",\n    \"telefono\": \"1234567890\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/alumnos/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alumnos",
+                ""
+              ]
+            },
+            "description": "Crear nuevo alumno. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar alumno (requiere propietario o admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Nombre modificado\",\n    \"correo\": \"correo_modificado@ejemplo.com\",\n    \"matricula\": \"PM2026\",\n    \"telefono\": \"0987654321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/alumnos/{{alumno_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alumnos",
+                "{{alumno_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Actualizar datos de alumno. Requiere ser el propio Alumno o Admin."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Inscripciones",
+      "item": [
+        {
+          "name": "Listar inscripciones (requiere autenticación — filtrado por rol)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "ana",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inscripciones/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "inscripciones",
+                ""
+              ]
+            },
+            "description": "Listar inscripciones. Filtrado: Alumno ve las suyas, Instructor las de su curso, Admin todas."
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de inscripción (requiere propietario, instructor o admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "ana",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "inscripciones",
+                "{{inscripcion_id}}",
+                ""
+              ]
+            },
+            "description": "Ver detalle de inscripción. Requiere Alumno propietario, Instructor del curso o Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear inscripción (requiere autenticación — solo a sí mismo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"inscripcion_id_creado\", jsonData.id.toString());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "ana",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"alumno\": 1,\n    \"curso\": 4,\n    \"estado\": \"activa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/inscripciones/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "inscripciones",
+                ""
+              ]
+            },
+            "description": "Crear inscripción. Alumnos solo a sí mismos. Admin a cualquiera."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar inscripción (requiere propietario o admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "ana",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"alumno\": 1,\n    \"curso\": 4,\n    \"estado\": \"completada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/inscripciones/{{inscripcion_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "inscripciones",
+                "{{inscripcion_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Actualizar estado de inscripción. Requiere Alumno propietario, Instructor o Admin."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Instructores",
+      "item": [
+        {
+          "name": "Listar instructores (requiere autenticación)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "ana",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/instructores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "instructores",
+                ""
+              ]
+            },
+            "description": "Listar todos los instructores. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de instructor (requiere autenticación)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "ana",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "pass1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/instructores/{{instructor_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "instructores",
+                "{{instructor_id}}",
+                ""
+              ]
+            },
+            "description": "Detalles de un instructor por ID. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear instructor (requiere admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"instructor_id_creado\", jsonData.id.toString());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Nombre instructor postman\",\n    \"correo\": \"postman_instructor@ejemplo.com\",\n    \"especialidad\": \"Ingeniería de pruebas\",\n    \"telefono\": \"1122334455\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/instructores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "instructores",
+                ""
+              ]
+            },
+            "description": "Crear nuevo instructor. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar instructor (requiere propietario o admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Nombre instructor modificado\",\n    \"correo\": \"instructor_modificado@ejemplo.com\",\n    \"especialidad\": \"Ingeniería de control de calidad\",\n    \"telefono\": \"1122334455\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/instructores/{{instructor_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "instructores",
+                "{{instructor_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Actualizar instructor. Requiere ser el propio Instructor o Admin."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Limpieza (borrar registros)",
+      "item": [
+        {
+          "name": "Eliminar inscripción (requiere admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inscripciones/{{inscripcion_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "inscripciones",
+                "{{inscripcion_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Eliminar inscripción por ID. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar alumno (requiere admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alumnos/{{alumno_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alumnos",
+                "{{alumno_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Eliminar alumno por ID. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar instructor (requiere admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/instructores/{{instructor_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "instructores",
+                "{{instructor_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Eliminar instructor por ID. Requiere Admin."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar curso (requiere admin)",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "admin1234",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cursos/{{curso_id_creado}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{curso_id_creado}}",
+                ""
+              ]
+            },
+            "description": "Eliminar curso por ID. Requiere Admin."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "curso_id",
+      "value": "1"
+    },
+    {
+      "key": "alumno_id",
+      "value": "1"
+    },
+    {
+      "key": "inscripcion_id",
+      "value": "1"
+    },
+    {
+      "key": "instructor_id",
+      "value": "1"
+    },
+    {
+      "key": "curso_id_creado",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "alumno_id_creado",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "inscripcion_id_creado",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "instructor_id_creado",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}

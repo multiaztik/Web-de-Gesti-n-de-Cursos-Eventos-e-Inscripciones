@@ -7,13 +7,34 @@ from django.urls import reverse_lazy
 
 from .models import Curso
 from .forms import CursoForm, BusquedaCursoForm
-from usuarios.models import PerfilUsuario
+from usuarios.models import PerfilUsuario, Instructor
 
 
 def inicio(request):
     """Página de inicio con cursos activos destacados."""
     cursos_activos = Curso.objects.filter(estado='activo')[:6]
     return render(request, 'inicio.html', {'cursos_activos': cursos_activos})
+
+
+class CursoInstructorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """Cursos que imparte el instructor autenticado."""
+    raise_exception = True
+    model = Curso
+    template_name = 'cursos/curso_mis_cursos.html'
+    context_object_name = 'cursos'
+
+    def test_func(self):
+        try:
+            return self.request.user.perfil.es_instructor()
+        except PerfilUsuario.DoesNotExist:
+            return False
+
+    def get_queryset(self):
+        try:
+            instructor = self.request.user.instructor
+        except Instructor.DoesNotExist:
+            return Curso.objects.none()
+        return Curso.objects.filter(instructor=instructor).select_related('instructor')
 
 
 class CursoListView(ListView):
@@ -61,8 +82,15 @@ class CursoDetailView(DetailView):
                 ya_inscrito = curso.inscripciones.filter(alumno=alumno, estado='activa').exists()
             except (AttributeError, ObjectDoesNotExist):
                 pass
+        es_alumno = False
+        if self.request.user.is_authenticated:
+            try:
+                es_alumno = self.request.user.perfil.es_alumno()
+            except (AttributeError, PerfilUsuario.DoesNotExist):
+                pass
         ctx['ya_inscrito'] = ya_inscrito
         ctx['alumno'] = alumno
+        ctx['es_alumno'] = es_alumno
         return ctx
 
 

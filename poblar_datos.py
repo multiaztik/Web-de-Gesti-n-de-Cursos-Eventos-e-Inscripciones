@@ -1,4 +1,7 @@
 """
+
+NO EJECUTAR EN PRODUCCIÓN
+
 Script para poblar la base de datos con datos de prueba.
 Ejecutar con: python manage.py shell < poblar_datos.py
 O directamente: python poblar_datos.py
@@ -60,7 +63,7 @@ inst3 = Instructor.objects.create(
 # Usuarios instructor
 u_inst1 = User.objects.create_user('carlos', 'carlos@scea.mx', 'pass1234',
                                     first_name='Carlos', last_name='Ramírez')
-PerfilUsuario.objects.filter(usuario=u_inst1).update(tipo='instructor')
+PerfilUsuario.objects.update_or_create(usuario=u_inst1, defaults={'tipo': 'instructor'})
 inst1.usuario = u_inst1
 inst1.save()
 
@@ -108,7 +111,7 @@ for alumno, username in [(a1, 'ana'), (a2, 'luis'), (a3, 'maria')]:
     u = User.objects.create_user(username, alumno.correo, 'pass1234',
                                   first_name=alumno.nombre.split()[0],
                                   last_name=' '.join(alumno.nombre.split()[1:]))
-    PerfilUsuario.objects.filter(usuario=u).update(tipo='alumno')
+    PerfilUsuario.objects.update_or_create(usuario=u, defaults={'tipo': 'alumno'})
     alumno.usuario = u
     alumno.save()
 

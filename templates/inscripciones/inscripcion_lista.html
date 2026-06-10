@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block titulo %}Inscripciones{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-journal-check"></i> Gestión de inscripciones</h2>
+    <a href="{% url 'inscripcion_crear' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Nueva inscripción
+    </a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control"
+                   placeholder="Buscar por alumno, matrícula o curso...">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th><th>Alumno</th><th>Curso</th><th>Estado</th><th>Fecha</th><th>Evidencia</th><th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for insc in inscripciones %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ insc.alumno.nombre }} <small class="text-muted">({{ insc.alumno.matricula }})</small></td>
+                    <td>{{ insc.curso.nombre }}</td>
+                    <td><span class="badge bg-secondary">{{ insc.get_estado_display }}</span></td>
+                    <td>{{ insc.fecha_inscripcion|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if insc.evidencia %}
+                        <i class="bi bi-paperclip text-success"></i> Sí
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'inscripcion_editar' insc.pk %}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'inscripcion_eliminar' insc.pk %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted">No hay inscripciones registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

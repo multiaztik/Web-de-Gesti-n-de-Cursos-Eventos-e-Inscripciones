@@ -31,9 +31,16 @@
                         <a class="nav-link" href="{% url 'curso_lista' %}"><i class="bi bi-book"></i> Cursos</a>
                     </li>
                     {% if user.is_authenticated %}
+                    {% if user.perfil.tipo == 'alumno' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'mis_inscripciones' %}"><i class="bi bi-list-check"></i> Mis Inscripciones</a>
                     </li>
+                    {% endif %}
+                    {% if user.perfil.tipo == 'instructor' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'curso_mis_cursos' %}"><i class="bi bi-easel"></i> Mis Cursos</a>
+                    </li>
+                    {% endif %}
                     {% if user.is_staff or user.perfil.tipo == 'admin' %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
@@ -43,6 +50,7 @@
                             <li><a class="dropdown-item" href="{% url 'curso_crear' %}">Nuevo Curso</a></li>
                             <li><a class="dropdown-item" href="{% url 'alumno_lista' %}">Alumnos</a></li>
                             <li><a class="dropdown-item" href="{% url 'instructor_lista' %}">Instructores</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inscripcion_lista' %}">Inscripciones</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/api/">API REST</a></li>
                             <li><a class="dropdown-item" href="/admin/">Panel Admin</a></li>
