@@ -37,7 +37,7 @@ class Curso(models.Model):
 
     def cupo_disponible(self):
         """Retorna cuántos lugares quedan."""
-        inscritos = self.inscripciones.filter(estado='activa').count()
+        inscritos = self.inscripciones.filter(estado='activo').count()
         return self.cupo_maximo - inscritos
 
     def tiene_cupo(self):
