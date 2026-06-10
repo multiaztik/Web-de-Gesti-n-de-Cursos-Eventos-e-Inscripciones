@@ -1,17 +1,36 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.db.models import Q
 
 from cursos.models import Curso
 from usuarios.models import Alumno, PerfilUsuario
 from .models import Inscripcion
-from .forms import EvidenciaForm
+from .forms import EvidenciaForm, InscripcionForm
+
+
+def _es_admin(user):
+    try:
+        return user.is_staff or user.perfil.es_admin()
+    except (AttributeError, PerfilUsuario.DoesNotExist):
+        return user.is_staff
 
 
 @login_required
 def inscribirse(request, pk):
     """RF07, RF08, RF09, RF15: Inscribir alumno a un curso."""
     curso = get_object_or_404(Curso, pk=pk)
+
+    try:
+        if not request.user.perfil.es_alumno():
+            messages.error(request, 'Solo los alumnos pueden inscribirse a cursos.')
+            return redirect('curso_detalle', pk=pk)
+    except (AttributeError, PerfilUsuario.DoesNotExist):
+        messages.error(request, 'Tu cuenta no tiene permiso para inscribirse a cursos.')
+        return redirect('curso_detalle', pk=pk)
 
     # Obtener el alumno vinculado al usuario
     try:
@@ -110,3 +129,71 @@ def alumnos_inscritos(request, pk):
         'curso': curso,
         'inscripciones': inscripciones,
     })
+
+class InscripcionListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    raise_exception = True
+    model = Inscripcion
+    template_name = 'inscripciones/inscripcion_lista.html'
+    context_object_name = 'inscripciones'
+
+    def test_func(self):
+        return _es_admin(self.request.user)
+
+    def get_queryset(self):
+        qs = Inscripcion.objects.select_related('alumno', 'curso', 'curso__instructor')
+        q = self.request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(
+                Q(alumno__nombre__icontains=q) |
+                Q(curso__nombre__icontains=q) |
+                Q(alumno__matricula__icontains=q)
+            )
+        return qs
+
+
+class InscripcionCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    raise_exception = True
+    model = Inscripcion
+    form_class = InscripcionForm
+    template_name = 'inscripciones/inscripcion_form.html'
+    success_url = reverse_lazy('inscripcion_lista')
+
+    def test_func(self):
+        return _es_admin(self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Inscripción creada exitosamente.')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Por favor corrige los errores del formulario.')
+        return super().form_invalid(form)
+
+
+class InscripcionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    raise_exception = True
+    model = Inscripcion
+    form_class = InscripcionForm
+    template_name = 'inscripciones/inscripcion_form.html'
+    success_url = reverse_lazy('inscripcion_lista')
+
+    def test_func(self):
+        return _es_admin(self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Inscripción actualizada exitosamente.')
+        return super().form_valid(form)
+
+
+class InscripcionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    raise_exception = True
+    model = Inscripcion
+    template_name = 'inscripciones/inscripcion_confirmar_eliminar.html'
+    success_url = reverse_lazy('inscripcion_lista')
+
+    def test_func(self):
+        return _es_admin(self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Inscripción eliminada.')
+        return super().form_valid(form)

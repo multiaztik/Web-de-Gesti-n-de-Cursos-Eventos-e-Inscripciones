@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.db import transaction
 from .models import PerfilUsuario, Alumno, Instructor
 
 
@@ -129,4 +130,70 @@ class InstructorForm(forms.ModelForm):
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():
             raise forms.ValidationError('Ya existe un instructor con este correo.')
+        user_qs = User.objects.filter(email=correo)
+        if self.instance.pk and self.instance.usuario_id:
+            user_qs = user_qs.exclude(pk=self.instance.usuario_id)
+        if user_qs.exists():
+            raise forms.ValidationError('Ya existe una cuenta con este correo electrónico.')
         return correo
+
+    def save(self, commit=True):
+        instructor = super().save(commit=False)
+        if instructor.usuario_id:
+            user = instructor.usuario
+            user.email = instructor.correo
+            partes = instructor.nombre.split(None, 1)
+            user.first_name = partes[0]
+            user.last_name = partes[1] if len(partes) > 1 else ''
+            user.save()
+        if commit:
+            instructor.save()
+        return instructor
+
+
+class InstructorCreateForm(InstructorForm):
+    """Alta de instructor con cuenta de acceso (User + PerfilUsuario + Instructor)."""
+    username = forms.CharField(
+        max_length=150, label='Usuario de acceso', required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        help_text='Nombre de usuario para iniciar sesión.',
+    )
+    password1 = forms.CharField(
+        label='Contraseña', required=True,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+    password2 = forms.CharField(
+        label='Confirmar contraseña', required=True,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username', '').strip()
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('Este nombre de usuario ya está en uso.')
+        return username
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError('Las contraseñas no coinciden.')
+        return password2
+
+    @transaction.atomic
+    def save(self, commit=True):
+        instructor = super(InstructorForm, self).save(commit=False)
+        user = User.objects.create_user(
+            username=self.cleaned_data['username'],
+            email=instructor.correo,
+            password=self.cleaned_data['password1'],
+        )
+        partes = instructor.nombre.split(None, 1)
+        user.first_name = partes[0]
+        user.last_name = partes[1] if len(partes) > 1 else ''
+        user.save()
+        PerfilUsuario.objects.create(usuario=user, tipo='instructor')
+        instructor.usuario = user
+        if commit:
+            instructor.save()
+        return instructor

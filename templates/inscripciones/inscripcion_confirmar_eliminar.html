@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block titulo %}Eliminar Instructor{% endblock %}
+{% block titulo %}Eliminar inscripción{% endblock %}
 
 {% block contenido %}
 <div class="row justify-content-center">
@@ -7,18 +7,12 @@
         <div class="card border-danger">
             <div class="card-header bg-danger text-white fw-bold"><i class="bi bi-exclamation-triangle"></i> Confirmar eliminación</div>
             <div class="card-body">
-                <p class="fs-5">¿Eliminar al instructor <strong>{{ object.nombre }}</strong>?</p>
-                <p class="text-muted small">
-                    Los cursos asociados quedarán sin instructor asignado.
-                    {% if object.usuario %}
-                    También se eliminará la cuenta de acceso <strong>{{ object.usuario.username }}</strong>.
-                    {% endif %}
-                </p>
+                <p class="fs-5">¿Eliminar la inscripción de <strong>{{ object.alumno.nombre }}</strong> en <strong>{{ object.curso.nombre }}</strong>?</p>
                 <form method="post">
                     {% csrf_token %}
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Sí, eliminar</button>
-                        <a href="{% url 'instructor_lista' %}" class="btn btn-secondary">Cancelar</a>
+                        <a href="{% url 'inscripcion_lista' %}" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
             </div>

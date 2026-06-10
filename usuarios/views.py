@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 
-from .forms import RegistroUsuarioForm, AlumnoForm, InstructorForm
+from .forms import RegistroUsuarioForm, AlumnoForm, InstructorForm, InstructorCreateForm
 from .models import Alumno, Instructor, PerfilUsuario
 
 
@@ -77,13 +77,17 @@ def perfil(request):
         'instructor': instructor,
     })
 
-
-# ---- Vistas de Alumnos (CRUD) ----
-
-class AlumnoListView(LoginRequiredMixin, ListView):
+class AlumnoListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    raise_exception = True
     model = Alumno
     template_name = 'usuarios/alumno_lista.html'
     context_object_name = 'alumnos'
+
+    def test_func(self):
+        try:
+            return self.request.user.perfil.es_admin()
+        except PerfilUsuario.DoesNotExist:
+            return self.request.user.is_staff
 
     def get_queryset(self):
         q = self.request.GET.get('q', '')
@@ -149,19 +153,23 @@ class AlumnoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         messages.success(self.request, 'Alumno eliminado.')
         return super().form_valid(form)
 
-
-# ---- Vistas de Instructores (CRUD) ----
-
-class InstructorListView(LoginRequiredMixin, ListView):
+class InstructorListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    raise_exception = True
     model = Instructor
     template_name = 'usuarios/instructor_lista.html'
     context_object_name = 'instructores'
+
+    def test_func(self):
+        try:
+            return self.request.user.perfil.es_admin()
+        except PerfilUsuario.DoesNotExist:
+            return self.request.user.is_staff
 
 
 class InstructorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     raise_exception = True
     model = Instructor
-    form_class = InstructorForm
+    form_class = InstructorCreateForm
     template_name = 'usuarios/instructor_form.html'
     success_url = reverse_lazy('instructor_lista')
 
@@ -172,8 +180,15 @@ class InstructorCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             return self.request.user.is_staff
 
     def form_valid(self, form):
-        messages.success(self.request, 'Instructor creado exitosamente.')
+        messages.success(
+            self.request,
+            f'Instructor "{form.instance.nombre}" creado con usuario "{form.cleaned_data["username"]}".'
+        )
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Por favor corrige los errores del formulario.')
+        return super().form_invalid(form)
 
 
 class InstructorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -207,5 +222,11 @@ class InstructorDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return self.request.user.is_staff
 
     def form_valid(self, form):
-        messages.success(self.request, 'Instructor eliminado.')
-        return super().form_valid(form)
+        nombre = self.object.nombre
+        usuario = self.object.usuario
+        if usuario:
+            usuario.delete()
+        else:
+            self.object.delete()
+        messages.success(self.request, f'Instructor "{nombre}" eliminado.')
+        return redirect(self.success_url)
