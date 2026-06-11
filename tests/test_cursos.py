@@ -64,11 +64,17 @@ class ProyectoFinalUnitTests(TestCase):
         self.assertTrue(self.curso.tiene_cupo())
 
         Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activa')
-        self.assertEqual(self.curso.cupo_disponible(), 1)
+        self.assertEqual(
+            self.curso.cupo_disponible(), 1,
+            "ERROR: El cupo disponible no se restó tras inscribir un alumno (inconsistencia de estado de inscripción)."
+        )
         self.assertTrue(self.curso.tiene_cupo())
 
         Inscripcion.objects.create(alumno=self.alumno2, curso=self.curso, estado='activa')
-        self.assertEqual(self.curso.cupo_disponible(), 0)
+        self.assertEqual(
+            self.curso.cupo_disponible(), 0,
+            "ERROR: El cupo disponible debería ser 0 al completarse el cupo máximo."
+        )
         self.assertFalse(self.curso.tiene_cupo())
 
     # 2. RESTRICCIÓN DE INSCRIPCIÓN ÚNICA (BASE DE DATOS)
@@ -78,6 +84,25 @@ class ProyectoFinalUnitTests(TestCase):
         
         with self.assertRaises(IntegrityError):
             Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activa')
+
+    # 2.5 VALIDACIÓN DE NOMBRE MÍNIMO (CURSO)
+    def test_formulario_curso_rechaza_nombre_corto(self):
+        """El CursoForm debe rechazar nombres con menos de tres caracteres."""
+        form_data = {
+            'nombre': 'Ab',  # Inválido: Menos de 3 caracteres
+            'descripcion': 'Test de validación de nombre',
+            'fecha_inicio': timezone.now().date(),
+            'fecha_termino': timezone.now().date() + datetime.timedelta(days=5),
+            'cupo_maximo': 10,
+            'estado': 'activo',
+            'instructor': self.instructor.id
+        }
+        form = CursoForm(data=form_data)
+        self.assertFalse(
+            form.is_valid(),
+            "ERROR: El formulario no debe ser válido si el nombre del curso tiene menos de 3 caracteres."
+        )
+        self.assertIn('nombre', form.errors)
 
     # 3. VALIDACIÓN DEL CUPO MÍNIMO (CURSO)
     def test_formulario_curso_rechaza_cupo_invalido(self):
