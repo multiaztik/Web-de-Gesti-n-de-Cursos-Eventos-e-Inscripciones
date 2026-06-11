@@ -262,3 +262,30 @@ def test_cierre_sesion(driver, live_server):
     )
     
     assert "next=/inscripciones/mis-inscripciones/" in driver.current_url
+
+
+@pytest.mark.django_db(transaction=True)
+def test_filtrado_catalogo_cursos(driver, live_server, setup_datos):
+    """
+    Filtro e interfaz del catálogo:
+    - Navegar al catálogo de cursos.
+    - Rellenar el input de búsqueda 'q' con 'Django'.
+    - Hacer clic en 'Buscar'.
+    - Verificar que el curso de Django aparece en la página.
+    """
+    driver.get(f"{live_server.url}/cursos/")
+    
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.NAME, "q"))
+    )
+    
+    input_busqueda = driver.find_element(By.NAME, "q")
+    input_busqueda.send_keys("Django")
+    
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+    
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Desarrollo Web con Django')]"))
+    )
+    
+    assert "Desarrollo Web con Django" in driver.page_source

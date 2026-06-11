@@ -63,22 +63,21 @@ class ProyectoFinalUnitTests(TestCase):
         self.assertEqual(self.curso.cupo_disponible(), 2)
         self.assertTrue(self.curso.tiene_cupo())
 
-        # Forzamos estado='activo' para que coincida con el filtro filter(estado='activo') del modelo
-        Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activo')
+        Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activa')
         self.assertEqual(self.curso.cupo_disponible(), 1)
         self.assertTrue(self.curso.tiene_cupo())
 
-        Inscripcion.objects.create(alumno=self.alumno2, curso=self.curso, estado='activo')
+        Inscripcion.objects.create(alumno=self.alumno2, curso=self.curso, estado='activa')
         self.assertEqual(self.curso.cupo_disponible(), 0)
         self.assertFalse(self.curso.tiene_cupo())
 
     # 2. RESTRICCIÓN DE INSCRIPCIÓN ÚNICA (BASE DE DATOS)
     def test_restriccion_fisica_inscripcion_unica(self):
         """La base de datos debe lanzar IntegrityError si se intenta duplicar alumno y curso."""
-        Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activo')
+        Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activa')
         
         with self.assertRaises(IntegrityError):
-            Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activo')
+            Inscripcion.objects.create(alumno=self.alumno1, curso=self.curso, estado='activa')
 
     # 3. VALIDACIÓN DEL CUPO MÍNIMO (CURSO)
     def test_formulario_curso_rechaza_cupo_invalido(self):
