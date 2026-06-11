@@ -110,7 +110,7 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado esperado** | Perfil de alumno creado en la base de datos y listado en la interfaz de administración. |
 | **Resultado obtenido** | Alumno registrado exitosamente por el administrador. |
 | **Estado** | Aprobado |
-| **Evidencia** | Prueba de permisos `test_admin_puede_crear_alumno` en `tests_seguridad_usuarios.py`. |
+| **Evidencia** | Prueba de permisos `test_admin_puede_crear_alumno` en `test_seguridad_usuarios.py`. |
 
 ---
 
@@ -125,7 +125,7 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado esperado** | Perfil de instructor creado en la base de datos. |
 | **Resultado obtenido** | Instructor creado exitosamente en la base de datos. |
 | **Estado** | Aprobado |
-| **Evidencia** | Prueba de permisos `test_admin_puede_crear_instructor` en `tests_seguridad_usuarios.py`. |
+| **Evidencia** | Prueba de permisos `test_admin_puede_crear_instructor` en `test_seguridad_usuarios.py`. |
 
 ---
 
@@ -185,7 +185,7 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado esperado** | El sistema responde con HTTP 200 OK y muestra la lista de alumnos inscritos en ese curso. |
 | **Resultado obtenido** | Lista de alumnos visualizada de forma correcta y restringida. |
 | **Estado** | Aprobado |
-| **Evidencia** | Prueba automatizada `test_instructor_del_curso_puede_ver_lista_inscritos` en `tests_seguridad_inscripciones.py`. |
+| **Evidencia** | Prueba automatizada `test_instructor_del_curso_puede_ver_lista_inscritos` en `test_seguridad_inscripciones.py`. |
 
 ---
 
@@ -230,7 +230,7 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado esperado** | El perfil de alumno se actualiza en SQLite. |
 | **Resultado obtenido** | Datos de alumno modificados correctamente en la base de datos. |
 | **Estado** | Aprobado |
-| **Evidencia** | Prueba automatizada `test_admin_puede_editar_alumno` en `tests_seguridad_usuarios.py`. |
+| **Evidencia** | Prueba automatizada `test_admin_puede_editar_alumno` en `test_seguridad_usuarios.py`. |
 
 ---
 
@@ -245,7 +245,7 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado esperado** | El alumno se borra de la base de datos de forma lógica/física. |
 | **Resultado obtenido** | Alumno borrado permanentemente de la base de datos. |
 | **Estado** | Aprobado |
-| **Evidencia** | Prueba automatizada `test_admin_puede_eliminar_alumno` en `tests_seguridad_usuarios.py`. |
+| **Evidencia** | Prueba automatizada `test_admin_puede_eliminar_alumno` en `test_seguridad_usuarios.py`. |
 
 ---
 
@@ -371,14 +371,27 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 
 ## 7. Evidencias de ejecución (manual)
 
-Durante la etapa de ejecución manual del plan de pruebas sobre el servidor de desarrollo, se registraron las siguientes trazas y logs de éxito en la consola de Django y la base de datos SQLite:
+Durante la etapa de ejecución manual del plan de pruebas sobre el servidor de desarrollo, se registraron las siguientes trazas y logs de éxito en la consola de Django y la base de datos SQLite, correspondientes a las acciones en el navegador:
 
-```bash
-[10/Jun/2026 14:22:11] "POST /usuarios/registro/ HTTP/1.1" 302 (Generada matrícula automática AL0001)
-[10/Jun/2026 14:25:34] "POST /cursos/nuevo/ HTTP/1.1" 302 (Curso "Base de Datos Relacionales" guardado)
-[10/Jun/2026 14:30:15] "GET /inscripciones/inscribirse/1/ HTTP/1.1" 302 (Inscripción confirmada, cupo -1)
-[10/Jun/2026 14:42:01] "GET /api/cursos/ HTTP/1.1" 200 OK (Payload JSON renderizado correctamente)
-```
+### 1. Registro público de alumno (CP-01)
+- **Log de consola:** `[10/Jun/2026 14:22:11] "POST /usuarios/registro/ HTTP/1.1" 302`
+- **Captura de pantalla:**
+  ![Registro Alumno](img/pruebas_test/registro_alumno.png)
+
+### 2. Alta de curso por administrador (CP-02)
+- **Log de consola:** `[10/Jun/2026 14:25:34] "POST /cursos/nuevo/ HTTP/1.1" 302`
+- **Captura de pantalla:**
+  ![Alta de Curso](img/pruebas_test/curso_nuevo.png)
+
+### 3. Flujo de inscripción visual interactiva (CP-20)
+- **Log de consola:** `[10/Jun/2026 14:30:15] "GET /inscripciones/inscribirse/1/ HTTP/1.1" 302`
+- **Captura de pantalla:**
+  ![Inscripción de Curso](img/pruebas_test/inscribirse_curso.png)
+
+### 4. Consulta pública de cursos vía API REST (CP-07)
+- **Log de consola:** `[10/Jun/2026 14:42:01] "GET /api/cursos/ HTTP/1.1" 200 OK`
+- **Captura de pantalla:**
+  ![Consulta API Cursos](img/pruebas_test/consulta_api_cusos.png)
 
 ---
 
@@ -389,7 +402,7 @@ Durante las fases de ejecución manual, pruebas unitarias y pruebas de integraci
 | ID del defecto | Módulo | Descripción | Severidad | Resolución |
 | :--- | :--- | :--- | :---: | :--- |
 | **DEF-01** | MOD-02 (Gestión de cursos) | Al editar un curso existente mediante la vista `CursoUpdateView`, el sistema permitía guardar cambios si se dejaba el nombre en blanco o relleno de espacios, evadiendo la longitud mínima. | Menor | Se aplicó una validación en `clean_nombre()` dentro de [forms.py](file:///c:/Users/galla/caalgato/Documents/INGSOFT/8vo/Frameworks/Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones/cursos/forms.py) para obligar a un mínimo de 3 caracteres reales. |
-| **DEF-02** | MOD-03 (Control de inscripciones) | **Inconsistencia lógica de cupo.** El método `cupo_disponible()` en [models.py](file:///c:/Users/galla/caalgato/Documents/INGSOFT/8vo/Frameworks/Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones/cursos/models.py) filtraba inscripciones con `estado='activo'`. Sin embargo, en el modelo `Inscripcion`, el estado de una inscripción activa se guarda como `'activa'` (según `ESTADO_CHOICES`). Esto provocaba que las inscripciones válidas no se restaran del cupo y el sistema permitiera inscripciones ilimitadas. | Alta | Se modificó la consulta en `cursos/models.py` para filtrar por `estado='activa'` y se adaptaron las pruebas unitarias en `tests/tests_cursos.py` que forzaban el estado inválido. |
+| **DEF-02** | MOD-03 (Control de inscripciones) | **Inconsistencia lógica de cupo.** El método `cupo_disponible()` en [models.py](file:///c:/Users/galla/caalgato/Documents/INGSOFT/8vo/Frameworks/Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones/cursos/models.py) filtraba inscripciones con `estado='activo'`. Sin embargo, en el modelo `Inscripcion`, el estado de una inscripción activa se guarda como `'activa'` (según `ESTADO_CHOICES`). Esto provocaba que las inscripciones válidas no se restaran del cupo y el sistema permitiera inscripciones ilimitadas. | Alta | Se modificó la consulta en `cursos/models.py` para filtrar por `estado='activa'` y se adaptaron las pruebas unitarias en `tests/test_cursos.py` que forzaban el estado inválido. |
 
 ---
 
@@ -410,13 +423,13 @@ Los scripts automáticos se dividen en pruebas de integración, pruebas de permi
 3. **`tests/test_seguridad_cursos.py`**:
    - Pruebas de permisos de control de acceso para la creación, edición y eliminación de cursos según el rol del usuario.
 
-4. **`tests/tests_cursos.py`**:
+4. **`tests/test_cursos.py`**:
    - Pruebas unitarias sobre la lógica de cupo, integridad física de base de datos, y validadores de formularios.
 
-5. **`tests/tests_seguridad_inscripciones.py`**:
+5. **`tests/test_seguridad_inscripciones.py`**:
    - Protección de comprobantes y evidencias digitales para que no puedan ser leídas o manipuladas por otros alumnos.
 
-6. **`tests/tests_seguridad_usuarios.py`**:
+6. **`tests/test_seguridad_usuarios.py`**:
    - Pruebas de protección del CRUD de alumnos e instructores, asegurando que solo los administradores puedan manipular dichos perfiles.
 
 ---
@@ -425,48 +438,13 @@ Los scripts automáticos se dividen en pruebas de integración, pruebas de permi
 
 La suite automatizada de pruebas fue ejecutada de manera local en el entorno de desarrollo, arrojando un éxito del 100% en todos sus componentes lógicos y de interfaz.
 
-### 1. Ejecución de suite estándar (integración, permisos y Selenium)
+### Ejecución de la suite completa de pruebas
 ```bash
 .venv\Scripts\python.exe -m pytest
 ```
-**Resultado de ejecución:**
-```text
-============================= test session starts =============================
-platform win32 -- Python 3.10.6, pytest-9.0.3, pluggy-1.6.0
-django: version: 4.2.8, settings: sistema_cursos.settings (from ini)
-rootdir: C:\Users\galla\caalgato\Documents\INGSOFT\8vo\Frameworks\Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones
-configfile: pytest.ini
-testpaths: tests
-plugins: django-4.12.0
-collected 19 items
+**Evidencia de ejecución (Captura real de la terminal con las 54 pruebas exitosas):**
 
-tests\test_inscripciones.py .....                                        [ 26%]
-tests\test_seguridad_cursos.py .........                                 [ 73%]
-tests\test_selenium.py .....                                             [100%]
-
-============================= 19 passed in 39.15s =============================
-```
-
-### 2. Ejecución de suite de modelos, formularios y reglas internas
-```bash
-.venv\Scripts\python.exe -m pytest tests/tests_cursos.py tests/tests_seguridad_inscripciones.py tests/tests_seguridad_usuarios.py
-```
-**Resultado de ejecución:**
-```text
-============================= test session starts =============================
-platform win32 -- Python 3.10.6, pytest-9.0.3, pluggy-1.6.0
-django: version: 4.2.8, settings: sistema_cursos.settings (from ini)
-rootdir: C:\Users\galla\caalgato\Documents\INGSOFT\8vo\Frameworks\Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones
-configfile: pytest.ini
-plugins: django-4.12.0
-collected 35 items
-
-tests\tests_cursos.py .......                                            [ 20%]
-tests\tests_seguridad_inscripciones.py ........                          [ 42%]
-tests\tests_seguridad_usuarios.py ....................                   [100%]
-
-============================= 35 passed in 21.58s =============================
-```
+![Ejecución de Suite Completa](img/pruebas_test/evidencia_pruebas_completas.png)
 **Total de pruebas ejecutadas con éxito:** **54 pruebas automatizadas PASSED.**
 
 ---
