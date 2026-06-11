@@ -1,7 +1,5 @@
 # 📑 REPORTE FINAL DE PRUEBAS DE SOFTWARE
 
-## 1. Portada
-
 **Institución:** Universidad Autónoma de Zacatecas (UAIE UAZ)  
 **Programa académico:** Ingeniería de Software  
 **Materia:** Pruebas y mantenimiento de software  
@@ -15,29 +13,21 @@
 
 **Fecha:** Junio 2026  
 
----
-
-## 2. Introducción
+## 1. Introducción
 Este documento constituye el entregable final de aseguramiento de la calidad para el **Sistema web de gestión de cursos, eventos e inscripciones académicas**. En el ciclo de vida del desarrollo de software, la fase de verificación y validación garantiza que las reglas de negocio se cumplan de manera estricta tanto a nivel de servidor (Caja Blanca) como en la interfaz de usuario (Caja Negra). A través de este reporte, se demuestran las pruebas dinámicas ejecutadas de forma manual y automatizada, asegurando la integridad del sistema antes de su liberación formal.
 
----
-
-## 3. Descripción del sistema probado
+## 2. Descripción del sistema probado
 El sistema bajo evaluación es una aplicación web transaccional desarrollada sobre el framework **Django 4.2** que utiliza una base de datos relacional **SQLite** para la persistencia local. Su arquitectura implementa un control de acceso basado en tres roles de usuario (`Administrador`, `Instructor` y `Alumno`) mediante el uso de mixins de protección de Django (`UserPassesTestMixin`). El software centraliza la publicación de ofertas académicas, el control de cupos máximos por taller, la carga de comprobantes digitales de inscripción y ofrece una API REST transaccional mediante Django REST Framework.
 
----
-
-## 4. Objetivo de las pruebas
+## 3. Objetivo de las pruebas
 El objetivo general de este proceso de pruebas es evaluar y certificar la calidad y correcto funcionamiento del sistema web mediante las siguientes metas específicas:
 - **Verificar la funcionalidad básica:** Asegurar que las operaciones críticas del ciclo de vida académico (registro, consulta, edición y eliminación de cursos, usuarios e inscripciones) se ejecuten correctamente de acuerdo a las especificaciones.
 - **Validar la integridad de los datos:** Comprobar que los formularios y campos del sistema cuenten con validaciones robustas ante entradas incorrectas o maliciosas (fechas inconsistentes, cupos no válidos, tipos de archivos prohibidos).
 - **Garantizar el cumplimiento de reglas de negocio:** Verificar restricciones de negocio críticas como la prevención de inscripciones duplicadas y el control estricto de cupos máximos por curso.
 - **Evaluar la seguridad y control de acceso:** Validar la restricción de vistas y endpoints de la API REST mediante roles de usuario (`Administrador`, `Instructor` y `Alumno`).
-- **Automatizar flujos de interfaz de usuario:** Implementar pruebas de extremo a extremo (E2E) con Selenium para prevenir regresiones visuales o de navegación en las operaciones de mayor uso.
+- **Automatizar flujos de interfaz de usuario:** Implementar pruebas de interfaz de usuario con Selenium para prevenir regresiones visuales o de navegación en las operaciones de mayor uso.
 
----
-
-## 5. Módulos seleccionados
+## 4. Módulos seleccionados
 Para estructurar el plan de validación, se construyó la siguiente matriz de priorización de módulos del sistema:
 
 | ID módulo | Nombre del módulo | Tipo de prueba | Componentes y reglas asociadas |
@@ -48,24 +38,19 @@ Para estructurar el plan de validación, se construyó la siguiente matriz de pr
 | **MOD-04** | Carga de evidencias | Caja Blanca | Subida de archivos (`EvidenciaForm`), límites de peso en servidor y control de extensiones. |
 | **MOD-05** | API REST (DRF) | Integración | Validación de respuestas JSON en endpoints y códigos de estado HTTP (200, 403). |
 
----
-
-## 6. Casos de prueba (ejecución manual)
-
-Para cumplir estrictamente con los lineamientos del proyecto final descritos en la sección 9 del archivo de instrucciones, se diseñaron y ejecutaron 20 casos de prueba que cubren todos los tipos mínimos requeridos.
+## 5. Casos de prueba (ejecución manual)
 
 ### Resumen de cobertura de requisitos de casos de prueba
-| Tipo de prueba | Casos de prueba asociados |
-| :--- | :--- |
-| **Pruebas de registro o alta de información** | CP-01, CP-02, CP-03, CP-04, CP-05 |
-| **Pruebas de consulta o listado** | CP-06, CP-07, CP-08 |
-| **Pruebas de edición o eliminación** | CP-09, CP-10, CP-11, CP-12 |
-| **Pruebas de validación de datos** | CP-13, CP-14, CP-15 |
-| **Pruebas de reglas de negocio** | CP-16, CP-17 |
-| **Pruebas de navegación o interfaz** | CP-18, CP-19, CP-20 |
-| **Total** | **20 casos** |
-
----
+| Tipo de prueba | Cantidad requerida | Cantidad en reporte | Casos de prueba asociados |
+| :--- | :---: | :---: | :--- |
+| **Pruebas de registro o alta de información** | 3 | 4 | CP-01, CP-02, CP-03, CP-04 |
+| **Pruebas de consulta o listado** | 2 | 2 | CP-06, CP-08 |
+| **Pruebas de edición o eliminación** | 2 | 4 | CP-09, CP-10, CP-11, CP-12 |
+| **Pruebas de validación de datos** | 3 | 3 | CP-13, CP-14, CP-15 |
+| **Pruebas de reglas de negocio** | 2 | 2 | CP-16, CP-17 |
+| **Pruebas de navegación o interfaz** | 2 | 2 | CP-18, CP-19 |
+| **Prueba libre elegida por el equipo** | 1 | 3 | CP-05 (Carga de comprobante), CP-07 (Consulta API), CP-20 (Inscripción interactiva) |
+| **Total** | **15** | **20** | **20 casos** |
 
 ### Detalle de casos de prueba
 
@@ -82,8 +67,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Log de consola: `[10/Jun/2026 14:22:11] "POST /usuarios/registro/ HTTP/1.1" 302` y Selenium `test_registro_e_inicio_sesion`. |
 
----
-
 #### **CP-02: Alta de curso por administrador**
 | Campo | Descripción |
 | :--- | :--- |
@@ -96,8 +79,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Curso creado exitosamente y disponible en la base de datos de inmediato. |
 | **Estado** | Aprobado |
 | **Evidencia** | Log de consola: `[10/Jun/2026 14:25:34] "POST /cursos/nuevo/ HTTP/1.1" 302` y test `test_admin_puede_acceder_a_crear_curso`. |
-
----
 
 #### **CP-03: Alta de alumno por administrador**
 | Campo | Descripción |
@@ -112,8 +93,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba de permisos `test_admin_puede_crear_alumno` en `test_seguridad_usuarios.py`. |
 
----
-
 #### **CP-04: Alta de instructor por administrador**
 | Campo | Descripción |
 | :--- | :--- |
@@ -125,9 +104,7 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado esperado** | Perfil de instructor creado en la base de datos. |
 | **Resultado obtenido** | Instructor creado exitosamente en la base de datos. |
 | **Estado** | Aprobado |
-| **Evidencia** | Prueba de permisos `test_admin_puede_crear_instructor` en `test_seguridad_usuarios.py`. |
-
----
+| **Evidencia** | Prueba de permisos `test_admin_puede_crear_instructor` en `test_seguridad_usuarios.py`. 
 
 #### **CP-05: Carga de comprobante válido**
 | Campo | Descripción |
@@ -142,8 +119,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Pruebas automatizadas `test_carga_evidencia_exitosa` y Selenium `test_subida_archivo`. |
 
----
-
 #### **CP-06: Consulta y búsqueda de cursos con filtros**
 | Campo | Descripción |
 | :--- | :--- |
@@ -156,8 +131,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Catálogo filtrado correctamente, mostrando solo el curso "Desarrollo Web con Django". |
 | **Estado** | Aprobado |
 | **Evidencia** | Pruebas de integración `test_busqueda_y_filtrado_cursos` y Selenium `test_filtrado_catalogo_cursos`. |
-
----
 
 #### **CP-07: Consulta pública de cursos vía API REST**
 | Campo | Descripción |
@@ -172,8 +145,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Log de consola: `[10/Jun/2026 14:42:01] "GET /api/cursos/ HTTP/1.1" 200 OK`. |
 
----
-
 #### **CP-08: Visualización de lista de alumnos inscritos**
 | Campo | Descripción |
 | :--- | :--- |
@@ -186,8 +157,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Lista de alumnos visualizada de forma correcta y restringida. |
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba automatizada `test_instructor_del_curso_puede_ver_lista_inscritos` en `test_seguridad_inscripciones.py`. |
-
----
 
 #### **CP-09: Edición de un curso por el administrador**
 | Campo | Descripción |
@@ -202,8 +171,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba automatizada de integración `test_admin_puede_acceder_a_editar_curso`. |
 
----
-
 #### **CP-10: Eliminación de un curso por el administrador**
 | Campo | Descripción |
 | :--- | :--- |
@@ -216,8 +183,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Curso borrado de forma permanente de la persistencia de datos. |
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba automatizada de integración `test_admin_puede_acceder_a_eliminar_curso`. |
-
----
 
 #### **CP-11: Edición de un alumno por el administrador**
 | Campo | Descripción |
@@ -232,8 +197,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba automatizada `test_admin_puede_editar_alumno` en `test_seguridad_usuarios.py`. |
 
----
-
 #### **CP-12: Eliminación de un alumno por el administrador**
 | Campo | Descripción |
 | :--- | :--- |
@@ -246,8 +209,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Alumno borrado permanentemente de la base de datos. |
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba automatizada `test_admin_puede_eliminar_alumno` en `test_seguridad_usuarios.py`. |
-
----
 
 #### **CP-13: Validación cruzada de fechas inconsistentes**
 | Campo | Descripción |
@@ -262,8 +223,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba unitaria `test_formulario_curso_rechaza_fecha_termino_anterior`. |
 
----
-
 #### **CP-14: Rechazo de cupo no válido en curso**
 | Campo | Descripción |
 | :--- | :--- |
@@ -276,8 +235,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Registro de creación bloqueado y alerta de error mostrada en el campo de cupo. |
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba unitaria `test_formulario_curso_rechaza_cupo_invalido`. |
-
----
 
 #### **CP-15: Rechazo de archivo por extensión prohibida**
 | Campo | Descripción |
@@ -292,8 +249,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba unitaria `test_validacion_archivo_evidencia_tamano_y_extension`. |
 
----
-
 #### **CP-16: Bloqueo de inscripciones duplicadas**
 | Campo | Descripción |
 | :--- | :--- |
@@ -306,8 +261,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Intento de inscripción duplicada bloqueado arrojando un error de integridad. |
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba unitaria `test_restriccion_fisica_inscripcion_unica`. |
-
----
 
 #### **CP-17: Rechazo de inscripción por cupo lleno**
 | Campo | Descripción |
@@ -322,8 +275,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba de integración `test_inscripcion_curso_lleno`. |
 
----
-
 #### **CP-18: Control de acceso por login exitoso**
 | Campo | Descripción |
 | :--- | :--- |
@@ -336,8 +287,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Resultado obtenido** | Acceso concedido exitosamente con menús de navegación adaptados. |
 | **Estado** | Aprobado |
 | **Evidencia** | Trazas en consola de inicio de sesión y prueba Selenium `test_registro_e_inicio_sesion`. |
-
----
 
 #### **CP-19: Destrucción de sesión por logout**
 | Campo | Descripción |
@@ -352,8 +301,6 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba de integración `test_logout_destruye_sesion` y Selenium `test_cierre_sesion`. |
 
----
-
 #### **CP-20: Flujo de inscripción visual interactiva**
 | Campo | Descripción |
 | :--- | :--- |
@@ -367,46 +314,48 @@ Para cumplir estrictamente con los lineamientos del proyecto final descritos en 
 | **Estado** | Aprobado |
 | **Evidencia** | Prueba automatizada de Selenium `test_inscripcion_visual`. |
 
----
+## 6. Evidencias de ejecución (manual)
 
-## 7. Evidencias de ejecución (manual)
-
-Durante la etapa de ejecución manual del plan de pruebas sobre el servidor de desarrollo, se registraron las siguientes trazas y logs de éxito en la consola de Django y la base de datos SQLite, correspondientes a las acciones en el navegador:
+Durante la etapa de ejecución manual del plan de pruebas, se capturaron las pantallas de la interfaz gráfica en el navegador web para evidenciar el correcto funcionamiento de los flujos principales del sistema:
 
 ### 1. Registro público de alumno (CP-01)
-- **Log de consola:** `[10/Jun/2026 14:22:11] "POST /usuarios/registro/ HTTP/1.1" 302`
-- **Captura de pantalla:**
-  ![Registro Alumno](img/pruebas_test/registro_alumno.png)
+- **Captura de pantalla:**  
+  ![Registro Alumno](img/pruebas_test/manuales/registro_alumno.png)
 
 ### 2. Alta de curso por administrador (CP-02)
-- **Log de consola:** `[10/Jun/2026 14:25:34] "POST /cursos/nuevo/ HTTP/1.1" 302`
-- **Captura de pantalla:**
-  ![Alta de Curso](img/pruebas_test/curso_nuevo.png)
+- **Capturas de pantalla:**  
+  ![Confirmación de Creación](img/pruebas_test/manuales/curso_nuevo.png)
+  ![Tarjeta del Curso en Catálogo](img/pruebas_test/manuales/curso_nuevo2.png)
 
 ### 3. Flujo de inscripción visual interactiva (CP-20)
-- **Log de consola:** `[10/Jun/2026 14:30:15] "GET /inscripciones/inscribirse/1/ HTTP/1.1" 302`
 - **Captura de pantalla:**
-  ![Inscripción de Curso](img/pruebas_test/inscribirse_curso.png)
+  ![Inscripción de Curso](img/pruebas_test/manuales/inscribirse_curso.png)
 
 ### 4. Consulta pública de cursos vía API REST (CP-07)
-- **Log de consola:** `[10/Jun/2026 14:42:01] "GET /api/cursos/ HTTP/1.1" 200 OK`
 - **Captura de pantalla:**
-  ![Consulta API Cursos](img/pruebas_test/consulta_api_cusos.png)
+  ![Consulta API Cursos](img/pruebas_test/manuales/consulta_api_cusos.png)
 
----
+## 7. Reporte de errores encontrados (bugs)
 
-## 8. Reporte de errores encontrados (bugs)
+Durante las fases de ejecución manual, pruebas unitarias y pruebas de integración, se identificaron y resolvieron los siguientes defectos. Se detallan a continuación en cumplimiento estricto con los campos requeridos en la sección 12 de las instrucciones (incluyendo pasos, resultados y referencias de evidencia):
 
-Durante las fases de ejecución manual, pruebas unitarias y pruebas de integración, se identificaron y resolvieron los siguientes defectos:
+| ID | Módulo | Descripción | Pasos para reproducir | Resultado esperado | Resultado obtenido | Severidad | Evidencia | Resolución |
+| :--- | :--- | :--- | :--- | :--- | :--- | :---: | :--- | :--- |
+| **DEF-01** | MOD-02 (Gestión de cursos) | Al editar un curso existente mediante la vista `CursoUpdateView`, el sistema permitía guardar cambios si se dejaba el nombre en blanco o relleno de espacios, evadiendo la longitud mínima. | 1. Iniciar sesión como administrador.<br>2. Ir a la vista de edición `/cursos/<id>/editar/`.<br>3. Modificar el campo nombre dejándolo en blanco o compuesto únicamente por espacios.<br>4. Guardar los cambios. | El formulario debe bloquear el envío y mostrar un error de validación indicando que el nombre del curso debe tener al menos 3 caracteres. | El sistema guardaba el curso sin validaciones adicionales, dejando el nombre vacío o inválido. | Menor | Ver sección "Evidencia de fallas" (`bug_nombre_curso.png`) | Se aplicó una validación en `clean_nombre()` dentro de [forms.py] para obligar a un mínimo de 3 caracteres reales. |
+| **DEF-02** | MOD-03 (Control de inscripciones) | **Inconsistencia lógica de cupo.** El método `cupo_disponible()` en [models.py] filtraba inscripciones con `estado='activo'`, pero en el modelo `Inscripcion`, el estado de una inscripción activa se guarda como `'activa'`. Esto provocaba que las inscripciones válidas no se restaran del cupo y el sistema permitiera inscripciones ilimitadas. | 1. Inscribir alumnos en un curso con cupo limitado hasta llenarlo.<br>2. Comprobar el valor devuelto por `cupo_disponible()` en el modelo `Curso`. | El cupo disponible debe disminuir con cada alumno con inscripción activa ('activa') y `tiene_cupo()` debe ser `False` cuando se alcance el cupo máximo. | Las inscripciones activas no se restaban del cupo, permitiendo inscripciones ilimitadas sin control de cupo. | Alta | Ver sección "Evidencia de fallas" (`bug_disponibilidad_curso.png`) | Se modificó la consulta en `cursos/models.py` para filtrar por `estado='activa'` y se adaptaron las pruebas unitarias en `tests/test_cursos.py` que forzaban el estado inválido. |
 
-| ID del defecto | Módulo | Descripción | Severidad | Resolución |
-| :--- | :--- | :--- | :---: | :--- |
-| **DEF-01** | MOD-02 (Gestión de cursos) | Al editar un curso existente mediante la vista `CursoUpdateView`, el sistema permitía guardar cambios si se dejaba el nombre en blanco o relleno de espacios, evadiendo la longitud mínima. | Menor | Se aplicó una validación en `clean_nombre()` dentro de [forms.py](file:///c:/Users/galla/caalgato/Documents/INGSOFT/8vo/Frameworks/Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones/cursos/forms.py) para obligar a un mínimo de 3 caracteres reales. |
-| **DEF-02** | MOD-03 (Control de inscripciones) | **Inconsistencia lógica de cupo.** El método `cupo_disponible()` en [models.py](file:///c:/Users/galla/caalgato/Documents/INGSOFT/8vo/Frameworks/Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones/cursos/models.py) filtraba inscripciones con `estado='activo'`. Sin embargo, en el modelo `Inscripcion`, el estado de una inscripción activa se guarda como `'activa'` (según `ESTADO_CHOICES`). Esto provocaba que las inscripciones válidas no se restaran del cupo y el sistema permitiera inscripciones ilimitadas. | Alta | Se modificó la consulta en `cursos/models.py` para filtrar por `estado='activa'` y se adaptaron las pruebas unitarias en `tests/test_cursos.py` que forzaban el estado inválido. |
+### Evidencia de fallas (Ejecución de pruebas con error)
 
----
+#### **DEF-01: Validación de nombre corto de curso**
+* **Evidencia del fallo en test unitario:**
+  ![Fallo DEF-01](img/pruebas_test/bugs/bug_nombre_curso.png)
 
-## 9. Pruebas automatizadas
+#### **DEF-02: Lógica de cupo disponible**
+* **Evidencia del fallo en test unitario:**
+  ![Fallo DEF-02](img/pruebas_test/bugs/bug_disponibilidad_curso.png)
+
+
+## 8. Pruebas automatizadas
 
 Los scripts automáticos se dividen en pruebas de integración, pruebas de permisos, pruebas unitarias y pruebas de interfaz construidos mediante la arquitectura de **Pytest** y **Selenium WebDriver**. Se estructuran de la siguiente manera dentro del directorio `tests/`:
 
@@ -432,25 +381,49 @@ Los scripts automáticos se dividen en pruebas de integración, pruebas de permi
 6. **`tests/test_seguridad_usuarios.py`**:
    - Pruebas de protección del CRUD de alumnos e instructores, asegurando que solo los administradores puedan manipular dichos perfiles.
 
----
+
 
 ### Evidencia de ejecución de pruebas automatizadas
 
-La suite automatizada de pruebas fue ejecutada de manera local en el entorno de desarrollo, arrojando un éxito del 100% en todos sus componentes lógicos y de interfaz.
+La suite automatizada de pruebas fue ejecutada de manera local en el entorno de desarrollo, arrojando un éxito del 100% en todos sus componentes lógicos y de interfaz. Se presenta a continuación la evidencia de ejecución tanto de manera individual por módulo como de la suite completa de pruebas:
 
-### Ejecución de la suite completa de pruebas
-```bash
-.venv\Scripts\python.exe -m pytest
-```
-**Evidencia de ejecución (Captura real de la terminal con las 54 pruebas exitosas):**
+#### **1. Ejecución de pruebas unitarias de cursos (`test_cursos.py`)**
+* **Comando:**
+  ```bash
+  .venv\Scripts\python.exe -m pytest tests/test_cursos.py -v
+  ```
+* **Evidencia de ejecución:**
+  ![Pruebas Cursos](img/pruebas_test/pytest_selenium/test_cursos_ind.png)
 
-![Ejecución de Suite Completa](img/pruebas_test/evidencia_pruebas_completas.png)
-**Total de pruebas ejecutadas con éxito:** **54 pruebas automatizadas PASSED.**
+#### **2. Ejecución de pruebas de integración de inscripciones (`test_inscripciones.py`)**
+* **Comando:**
+  ```bash
+  .venv\Scripts\python.exe -m pytest tests/test_inscripciones.py -v
+  ```
+* **Evidencia de ejecución:**
+  ![Pruebas Inscripciones](img/pruebas_test/pytest_selenium/test_inscripciones_ind.png)
 
----
+#### **3. Ejecución de pruebas de interfaz de usuario (`test_selenium.py`)**
+* **Comando:**
+  ```bash
+  .venv\Scripts\python.exe -m pytest tests/test_selenium.py -v
+  ```
+* **Evidencia de ejecución:**
+  ![Pruebas Selenium](img/pruebas_test/pytest_selenium/test_selenium_ind.png)
 
-## 10. Conclusiones
+#### **4. Ejecución de la suite completa de pruebas**
+* **Comando:**
+  ```bash
+  .venv\Scripts\python.exe -m pytest
+  ```
+* **Evidencia de ejecución (55 pruebas exitosas):**
+  ![Ejecución de Suite Completa](img/pruebas_test/pytest_selenium/evidencia_pruebas_completas.png)
+  **Total de pruebas ejecutadas con éxito:** **55 pruebas automatizadas PASSED.**
 
-Tras completar de forma satisfactoria la ejecución de los 20 casos de prueba manuales y las 54 pruebas lógicas automatizadas, el equipo evaluador concluye que el **Sistema web de gestión de cursos** posee un nivel óptimo de madurez, seguridad y robustez de software.
 
-Las reglas críticas de negocio (como el control estricto de cupos y la anulación de registros duplicados en base de datos) se ejecutan de manera consistente e íntegra en el servidor tras la resolución de los defectos identificados. La amplia cobertura de código backend de Django y la automatización E2E de la interfaz con Selenium aseguran la estabilidad del sistema frente a regresiones en futuras ampliaciones. El software es plenamente estable, seguro y está listo para su liberación local institucional.
+
+## 9. Conclusiones
+
+Tras completar de forma satisfactoria la ejecución de los 20 casos de prueba manuales y las 55 pruebas lógicas automatizadas, el equipo evaluador concluye que el **Sistema web de gestión de cursos** posee un nivel óptimo de madurez, seguridad y robustez de software.
+
+Las reglas críticas de negocio (como el control estricto de cupos y la anulación de registros duplicados en base de datos) se ejecutan de manera consistente e íntegra en el servidor tras la resolución de los defectos identificados. La amplia cobertura de código backend de Django y la automatización de la interfaz con Selenium aseguran la estabilidad del sistema frente a regresiones en futuras ampliaciones. El software es plenamente estable, seguro y está listo para su liberación local institucional.
