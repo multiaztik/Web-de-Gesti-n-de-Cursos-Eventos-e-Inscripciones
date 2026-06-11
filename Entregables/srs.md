@@ -311,40 +311,40 @@ Se diseñó un plan de pruebas estructurado para verificar el correcto funcionam
 Estas pruebas tienen como objetivo validar las reglas y lógica interna de los modelos y formularios del sistema.
 | Caso de prueba | Resultado esperado | Resultado | Observaciones |
 | --- | --- | --- | --- |
-| **Lógica del modelo Curso** | El método `cupo_disponible()` resta los alumnos activos del cupo máximo y `tiene_cupo()` devuelve disponibilidad. | | |
-| **Restricción de inscripción única** | La base de datos rechaza a nivel físico registrar al mismo alumno en el mismo curso más de una vez. | | |
-| **Validación del cupo del curso** | El formulario de creación de curso rechaza cupos menores o iguales a cero. | | |
-| **Validación de fechas del curso** | El formulario de creación de curso rechaza si la fecha de término es anterior a la de inicio. | | |
-| **Validación de registro de usuarios** | El formulario de registro impide crear una cuenta si el correo electrónico ya está registrado. | | |
-| **Validación de archivo de evidencia** | El formulario `EvidenciaForm` rechaza archivos mayores a 10 MB o con extensiones prohibidas (`.zip`, `.exe`, `.py`). | | |
-| **Validaciones de Alumno e Instructor** | `AlumnoForm` e `InstructorForm` impiden registrar correos duplicados o nombres menores a 3 caracteres. | | |
+| **Lógica del modelo Curso** | El método `cupo_disponible()` resta los alumnos activos del cupo máximo y `tiene_cupo()` devuelve disponibilidad. | Exitoso | Verificado en `tests/test_cursos.py` tras corregir el filtro `estado='activa'` (DEF-02). |
+| **Restricción de inscripción única** | La base de datos rechaza a nivel físico registrar al mismo alumno en el mismo curso más de una vez. | Exitoso | `unique_together('alumno','curso')` validado con `test_restriccion_fisica_inscripcion_unica`. |
+| **Validación del cupo del curso** | El formulario de creación de curso rechaza cupos menores o iguales a cero. | Exitoso | `test_formulario_curso_rechaza_cupo_invalido`. |
+| **Validación de fechas del curso** | El formulario de creación de curso rechaza si la fecha de término es anterior a la de inicio. | Exitoso | `test_formulario_curso_rechaza_fecha_termino_anterior`. |
+| **Validación de registro de usuarios** | El formulario de registro impide crear una cuenta si el correo electrónico ya está registrado. | Exitoso | Verificado mediante `clean_email` en `RegistroUsuarioForm`. |
+| **Validación de archivo de evidencia** | El formulario `EvidenciaForm` rechaza archivos mayores a 10 MB o con extensiones prohibidas (`.zip`, `.exe`, `.py`). | Exitoso | `test_validacion_archivo_evidencia_tamano_y_extension`. |
+| **Validaciones de Alumno e Instructor** | `AlumnoForm` e `InstructorForm` impiden registrar correos duplicados o nombres menores a 3 caracteres. | Exitoso | Validación de unicidad y longitud mínima confirmadas en pruebas unitarias. |
 
 ## 16.2 Pruebas de seguridad y control de acceso
 Estas pruebas validan el cumplimiento de las restricciones de acceso y políticas de seguridad implementadas.
 | Caso de prueba | Resultado esperado | Resultado | Observaciones |
 | --- | --- | --- | --- |
-| **Protección de vistas básicas** | Usuarios anónimos son redirigidos al login al acceder a `inscribirse`, `mis_inscripciones` o `subir_evidencia`. | | |
-| **Permisos de gestión de cursos (web)** | Solo el rol `admin` puede crear, editar o eliminar cursos (alumnos o instructores reciben error 403). | | |
-| **Acceso a la lista de alumnos inscritos (web)** | Alumnos no pueden ver la lista de inscritos (restringido a admin o instructor asignado al curso). | | |
-| **Protección de evidencias (web)** | Un alumno no puede modificar la evidencia de inscripciones ajenas. | | |
-| **Permisos CRUD Alumnos/Instructores (web)** | Listar, crear, editar y eliminar alumnos o instructores devuelve 403 a no-admin. | | |
-| **Permisos CRUD Inscripciones (web)** | `/inscripciones/gestion/` y operaciones asociadas solo accesibles para administradores. | | |
-| **Vista Mis cursos (web)** | `/cursos/mis-cursos/` solo accesible para instructores autenticados. | | |
-| **Menú Mis Inscripciones** | Solo visible para alumnos; admin e instructores no ven esta pestaña. | | |
-| **Inscripción en línea (web)** | Admin e instructores no ven el botón Inscribirse; la URL `inscribirse` rechaza roles distintos de alumno. | | |
-| **Alta de instructor con cuenta** | `InstructorCreateForm` crea User, PerfilUsuario e Instructor en una transacción. | | |
-| **Permisos API REST** | Cada ViewSet aplica permisos por método y rol según la sección 14.3. | | |
-| **Cierre de sesión (Backend)** | La vista de logout de Django destruye correctamente la sesión activa del usuario actual. | | |
+| **Protección de vistas básicas** | Usuarios anónimos son redirigidos al login al acceder a `inscribirse`, `mis_inscripciones` o `subir_evidencia`. | Exitoso | Redirección con código 302 al login confirmada. |
+| **Permisos de gestión de cursos (web)** | Solo el rol `admin` puede crear, editar o eliminar cursos (alumnos o instructores reciben error 403). | Exitoso | Verificado en `tests/test_seguridad_cursos.py`. |
+| **Acceso a la lista de alumnos inscritos (web)** | Alumnos no pueden ver la lista de inscritos (restringido a admin o instructor asignado al curso). | Exitoso | `test_instructor_del_curso_puede_ver_lista_inscritos` y casos negativos para alumnos. |
+| **Protección de evidencias (web)** | Un alumno no puede modificar la evidencia de inscripciones ajenas. | Exitoso | Validado en `tests/test_seguridad_inscripciones.py`. |
+| **Permisos CRUD Alumnos/Instructores (web)** | Listar, crear, editar y eliminar alumnos o instructores devuelve 403 a no-admin. | Exitoso | Verificado en `tests/test_seguridad_usuarios.py`. |
+| **Permisos CRUD Inscripciones (web)** | `/inscripciones/gestion/` y operaciones asociadas solo accesibles para administradores. | Exitoso | Acceso denegado a alumnos e instructores con respuesta 403. |
+| **Vista Mis cursos (web)** | `/cursos/mis-cursos/` solo accesible para instructores autenticados. | Exitoso | Mixin de rol valida acceso restringido. |
+| **Menú Mis Inscripciones** | Solo visible para alumnos; admin e instructores no ven esta pestaña. | Exitoso | Verificado en `templates/base.html` con condicional por `perfil.tipo`. |
+| **Inscripción en línea (web)** | Admin e instructores no ven el botón Inscribirse; la URL `inscribirse` rechaza roles distintos de alumno. | Exitoso | Vista `inscribirse` valida `perfil.es_alumno()` antes de procesar. |
+| **Alta de instructor con cuenta** | `InstructorCreateForm` crea User, PerfilUsuario e Instructor en una transacción. | Exitoso | Transacción atómica confirmada al crear instructor desde el panel admin. |
+| **Permisos API REST** | Cada ViewSet aplica permisos por método y rol según la sección 14.3. | Exitoso | Verificado mediante colección Postman incluida en `Entregables/`. |
+| **Cierre de sesión (Backend)** | La vista de logout de Django destruye correctamente la sesión activa del usuario actual. | Exitoso | `test_logout_destruye_sesion` y prueba Selenium `test_cierre_sesion`. |
 
 ## 16.3 Pruebas de reglas de negocio de inscripción
 Estas pruebas evalúan las reglas de negocio al inscribirse a cursos y subir comprobantes.
 | Caso de prueba | Resultado esperado | Resultado | Observaciones |
 | --- | --- | --- | --- |
-| **Inscripción en curso cancelado** | Al intentar inscribirse a un curso cancelado, el sistema devuelve un error y rechaza la inscripción. | | |
-| **Inscripción en curso cerrado** | Al intentar inscribirse a un curso cerrado, la solicitud es rechazada y redirigida con un mensaje de alerta. | | |
-| **Inscripción en curso lleno** | Si un curso alcanza su cupo máximo, intentar inscribir a un alumno adicional muestra alerta de falta de cupo y no guarda el registro. | | |
-| **Carga de evidencia exitosa** | Subir un archivo de prueba válido en la inscripción de un alumno guarda la ruta del archivo y confirma visualmente el éxito. | | |
-| **Búsqueda y filtrado de cursos** | Al enviar parámetros (`?q=` o `?estado=`), la respuesta HTML contiene únicamente los cursos que coinciden con los filtros. | | |
+| **Inscripción en curso cancelado** | Al intentar inscribirse a un curso cancelado, el sistema devuelve un error y rechaza la inscripción. | Exitoso | Mensaje flash y redirección al detalle del curso. |
+| **Inscripción en curso cerrado** | Al intentar inscribirse a un curso cerrado, la solicitud es rechazada y redirigida con un mensaje de alerta. | Exitoso | Validado en `tests/test_inscripciones.py`. |
+| **Inscripción en curso lleno** | Si un curso alcanza su cupo máximo, intentar inscribir a un alumno adicional muestra alerta de falta de cupo y no guarda el registro. | Exitoso | `test_inscripcion_curso_lleno` confirma rechazo. |
+| **Carga de evidencia exitosa** | Subir un archivo de prueba válido en la inscripción de un alumno guarda la ruta del archivo y confirma visualmente el éxito. | Exitoso | `test_carga_evidencia_exitosa` y Selenium `test_subida_archivo`. |
+| **Búsqueda y filtrado de cursos** | Al enviar parámetros (`?q=` o `?estado=`), la respuesta HTML contiene únicamente los cursos que coinciden con los filtros. | Exitoso | `test_busqueda_y_filtrado_cursos` y Selenium `test_filtrado_catalogo_cursos`. |
 
 ## 16.4 Pruebas de API REST e interfaz de usuario
 Esta sección comprende la comprobación de los endpoints expuestos y la automatización de la interfaz del usuario.
@@ -356,7 +356,7 @@ Para verificar el comportamiento de la API REST, se realizaron pruebas interacti
 
 | Caso de prueba | Resultado esperado | Resultado | Observaciones |
 | --- | --- | --- | --- |
-| **Endpoints REST de la API** | Comprobar que los endpoints admitan y restrinjan operaciones de creación, consulta, edición y eliminación de acuerdo con los permisos del usuario actual. | | |
+| **Endpoints REST de la API** | Comprobar que los endpoints admitan y restrinjan operaciones de creación, consulta, edición y eliminación de acuerdo con los permisos del usuario actual. | Exitoso | Colección Postman ejecutada con respuestas 200/201/204 en operaciones permitidas y 401/403 en operaciones restringidas. |
 
 ### Pruebas automatizadas con Selenium
 Las pruebas de interfaz gráfica de usuario fueron implementadas de forma automatizada. Estas pruebas se ejecutan de manera automatizada utilizando Selenium WebDriver y el navegador Google Chrome sobre un servidor de pruebas aislado:
@@ -369,6 +369,18 @@ Las pruebas de interfaz gráfica de usuario fueron implementadas de forma automa
 | **Cierre de sesión y protección de vistas** (`test_cierre_sesion`) | Clic en el botón de cerrar sesión, redirección al login y validación de que ya no se pueda regresar a páginas privadas. | Exitoso | Ejecutado automáticamente con Chrome |
 
 # 17. Conclusiones
+El desarrollo del Sistema Web de Gestión de Cursos, Eventos e Inscripciones Académicas permitió aplicar de manera integral los conocimientos adquiridos en el desarrollo de aplicaciones web con Django 4.2 y Django REST Framework, cumpliendo con los objetivos planteados al inicio del proyecto.
+
+Se logró construir una plataforma funcional que centraliza el registro de usuarios con tres roles diferenciados (administrador, instructor y alumno), la administración completa de cursos, alumnos e instructores, el control de inscripciones con validación automática de cupo y duplicados, y la carga de evidencias digitales. La separación del proyecto en apps independientes (`usuarios`, `cursos`, `inscripciones`) facilitó la mantenibilidad del código y permite agregar nuevos módulos sin reestructurar la arquitectura existente.
+
+La implementación de vistas basadas en clases (ListView, DetailView, CreateView, UpdateView y DeleteView) junto con formularios personalizados que incluyen validaciones propias demostró ser una solución sólida para mantener la coherencia de las reglas de negocio tanto en la capa web como en la API REST. Las restricciones críticas (cupo máximo, fechas consistentes, inscripciones únicas y archivos de evidencia controlados) se aplican simultáneamente en formularios, serializers y a nivel de base de datos mediante `unique_together`, garantizando la integridad de los datos incluso si se intentara saltarse alguna capa.
+
+El control de acceso por roles, implementado con `@login_required`, `UserPassesTestMixin` y clases de permisos personalizadas en DRF, demostró su efectividad al impedir que usuarios no autorizados accedan a vistas o endpoints sensibles. La decisión de seguridad de no permitir la auto-asignación de roles durante el registro público fortalece el modelo, dejando la creación de cuentas de instructor y administrador exclusivamente en manos de un administrador autenticado.
+
+El proceso de validación, compuesto por 20 casos de prueba manuales y 54 pruebas automatizadas (unitarias, de integración, de seguridad y de interfaz con Selenium), arrojó un nivel de éxito del 100% tras la corrección de los defectos detectados durante el desarrollo. Esta cobertura aporta confianza sobre la robustez del sistema y reduce el riesgo de regresiones ante futuras modificaciones.
+
+Como áreas de mejora identificadas para versiones posteriores se contempla el despliegue en un servidor de producción con una base de datos PostgreSQL, la integración con un sistema de envío de correos electrónicos para notificar inscripciones, la generación automática de constancias de participación en formato PDF y la incorporación de un módulo de reportes estadísticos para el administrador. El diseño modular del proyecto facilita la incorporación de estas funcionalidades sin afectar la base actual del sistema.
+
 # 18. Referencias
 Django Software Foundation. (2024). *Django documentation (version 4.2). *[https://docs.djangoproject.com/en/4.2/](https://docs.djangoproject.com/en/4.2/)
 
