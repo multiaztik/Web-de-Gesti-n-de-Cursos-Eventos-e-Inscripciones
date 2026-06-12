@@ -424,6 +424,4 @@ La suite automatizada de pruebas fue ejecutada de manera local en el entorno de 
 
 ## 9. Conclusiones
 
-Tras completar de forma satisfactoria la ejecución de los 20 casos de prueba manuales y las 55 pruebas lógicas automatizadas, el equipo evaluador concluye que el **Sistema web de gestión de cursos** posee un nivel óptimo de madurez, seguridad y robustez de software.
-
-Las reglas críticas de negocio (como el control estricto de cupos y la anulación de registros duplicados en base de datos) se ejecutan de manera consistente e íntegra en el servidor tras la resolución de los defectos identificados. La amplia cobertura de código backend de Django y la automatización de la interfaz con Selenium aseguran la estabilidad del sistema frente a regresiones en futuras ampliaciones. El software es plenamente estable, seguro y está listo para su liberación local institucional.
+Concluyendo con la evaluación de nuestro proyecto, podemos afirmar que el sistema web ha alcanzado el nivel de funcionalidad y consistencia que buscábamos. La ejecución manual de los 20 casos de prueba y las 55 pruebas automáticas nos permitieron verificar a fondo el comportamiento del software y corregir detalles de seguridad y lógica de base de datos a tiempo. Consideramos que el proyecto se encuentra en una versión local sumamente estable y segura. Esta experiencia práctica no solo validó la calidad del sistema desarrollado, sino que también nos sirvió para comprender la importancia del testing sistemático en el ciclo de vida del software.
