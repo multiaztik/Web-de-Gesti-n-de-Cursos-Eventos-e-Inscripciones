@@ -58,12 +58,12 @@ cd Web-de-Gesti-n-de-Cursos-Eventos-e-Inscripciones
 
 ```bash
 # Windows
-python -m venv venv
-venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate
 
 # Mac/Linux
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 ```
 
 ### 3. Instalar dependencias
